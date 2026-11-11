@@ -33,3 +33,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Scene rendering scratch (generated)
+scenes/_frames.raw
+scenes/_ambience.wav
+scenes/_frames/
