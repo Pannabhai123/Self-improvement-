@@ -33,3 +33,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# video render output (too large for git; rebuild with build_video.py)
+shakti-ke-48-niyam/video/*.mp4
+shakti-ke-48-niyam/video/segs/
+shakti-ke-48-niyam/video/__pycache__/
