@@ -1,2 +1,11 @@
 # Self-improvement-
-Create self improvement videos 
+
+Self-improvement वीडियो बनाने के लिए कंटेंट।
+
+## बने हुए वीडियो किट
+
+| विषय | फोल्डर | क्या है |
+|---|---|---|
+| शक्ति के 48 नियम (The 48 Laws of Power) | [`shakti-ke-48-niyam/`](shakti-ke-48-niyam/) | पूरा सार (48 नियम, आसान हिंदी) + 50 मिनट का वीडियो ब्लूप्रिंट |
+
+हर फोल्डर में दो फाइलें हैं — `01-pura-saar-hindi.md` (बोलने का पूरा मटीरियल) और `02-video-blueprint-*.md` (टाइमिंग, हुक, टाइटल, थंबनेल)।
