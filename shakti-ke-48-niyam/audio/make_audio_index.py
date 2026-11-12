@@ -24,8 +24,8 @@ for f in files:
     i = int(re.search(r"vo-(\d+)", f).group(1))
     d = duration(f)
     starts[i], durs[i] = t, d
-    t += d
-total = t
+    t += d + 0.4          # 0.4 s pause after every clip (matches the joined file)
+total = t - 0.4
 
 law = {}
 for i in sorted(starts):
