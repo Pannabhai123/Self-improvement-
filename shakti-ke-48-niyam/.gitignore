@@ -1,3 +1,5 @@
 
-# generated voiceover audio (large)
-audio/*.mp3
+# big derived audio — rebuild from vo-*.mp3 with audio/make_final_audio.py
+audio/pura-voiceover*.mp3
+audio/final/
+audio/join-fx-preview.mp3
