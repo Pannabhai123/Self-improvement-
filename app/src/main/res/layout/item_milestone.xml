@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One milestone. Reached ones are marked with a filled tick and stay in the list;
+  unreached ones are dimmed rather than hidden, so the path ahead is visible.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_pill"
+    android:gravity="center_vertical"
+    android:minHeight="52dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_l"
+    android:paddingTop="@dimen/space_s"
+    android:paddingEnd="@dimen/space_l"
+    android:paddingBottom="@dimen/space_s"
+    android:layout_marginBottom="@dimen/space_s">
+
+    <ImageView
+        android:id="@+id/iv_milestone_state"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_radio_unchecked"
+        app:tint="@color/text_tertiary" />
+
+    <TextView
+        android:id="@+id/tv_milestone_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:layout_weight="1"
+        android:textAppearance="@style/TextAppearance.FocusLife.Body"
+        android:textColor="@color/text_secondary"
+        tools:text="First 100-minute focus session" />
+
+    <TextView
+        android:id="@+id/tv_milestone_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_s"
+        android:fontFeatureSettings="tnum"
+        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+        tools:text="12 Nov" />
+</LinearLayout>

@@ -1017,11 +1017,17 @@ public final class Repository {
         s.totalStudyMinutes = db.studyDao().minutesBetween("1970-01-01", TimeUtils.today());
 
         int focusSec = 0;
+        int completed = 0;
         List<FocusSessionEntity> sessions = db.focusSessionDao().recent(10_000);
-        s.totalSessions = sessions.size();
         for (FocusSessionEntity f : sessions) {
+            if (f == null) continue;
             focusSec += f.focusedSec;
+            // Every milestone and every report says "sessions completed", so an
+            // abandoned session must not count toward them. Its focused minutes
+            // still count, because the time was genuinely spent.
+            if (f.completed) completed++;
         }
+        s.totalSessions = completed;
         s.totalFocusMinutes = focusSec / 60;
 
         s.totalDistanceM = db.fitnessDao().distanceBetween("1970-01-01", TimeUtils.today());

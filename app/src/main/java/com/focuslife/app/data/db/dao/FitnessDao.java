@@ -85,6 +85,17 @@ public interface FitnessDao {
     @Update
     int updateWorkout(WorkoutEntity workout);
 
+    /**
+     * Persists an edited workout log in place.
+     *
+     * <p>{@code workout_logs} has a composite primary key of workout id plus day
+     * key, so an update replaces exactly the one row. Recording a timed set after
+     * the checklist toggle used to delete and re-insert the row, which worked but
+     * needlessly exercised the cascade-delete foreign key on every edit.</p>
+     */
+    @Update
+    int updateWorkoutLog(WorkoutLogEntity log);
+
     @Delete
     int deleteWorkout(WorkoutEntity workout);
 

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.focuslife.app.util.TimeUtils;
+
 /**
  * User settings and daily targets.
  *
@@ -44,6 +46,7 @@ public final class Prefs {
     private static final String K_DEEP_FOCUS_DEFAULT = "deep_focus_default";
     private static final String K_COOLDOWN_SEC = "block_cooldown_sec";
     private static final String K_LAST_QUOTE_INDEX = "last_quote_index";
+    private static final String K_LAST_QUOTE_DAY = "last_quote_day";
     private static final String K_SCREEN_TIME_TIPS_SHOWN = "screen_tips_shown";
     private static final String K_STREAK_MIN_SCORE = "streak_min_score";
 
@@ -315,12 +318,25 @@ public final class Prefs {
         prefs(c).edit().putBoolean(K_ONBOARDED, done).apply();
     }
 
+    /**
+     * The quote index the user advanced to, but only if it was chosen today.
+     *
+     * <p>Stored alongside a day key so a pick made yesterday cannot override
+     * today's deterministic rotation. Returns -1 when nothing was chosen today,
+     * meaning "use the day's own quote".</p>
+     */
     public static int lastQuoteIndex(@NonNull Context c) {
+        String day = prefs(c).getString(K_LAST_QUOTE_DAY, null);
+        if (day == null || !day.equals(TimeUtils.today())) return -1;
         return prefs(c).getInt(K_LAST_QUOTE_INDEX, -1);
     }
 
+    /** Records an advanced quote pick for today. */
     public static void setLastQuoteIndex(@NonNull Context c, int index) {
-        prefs(c).edit().putInt(K_LAST_QUOTE_INDEX, index).apply();
+        prefs(c).edit()
+                .putInt(K_LAST_QUOTE_INDEX, index)
+                .putString(K_LAST_QUOTE_DAY, TimeUtils.today())
+                .apply();
     }
 
     public static boolean screenTipsShown(@NonNull Context c) {
@@ -362,13 +378,13 @@ public final class Prefs {
     public static boolean isRestDayToday(@NonNull Context c) {
         SharedPreferences s = state(c);
         return s.getBoolean(K_REST_DAY_ENABLED, false)
-                && com.focuslife.app.util.TimeUtils.today().equals(s.getString(K_REST_DAY_KEY, ""));
+                && TimeUtils.today().equals(s.getString(K_REST_DAY_KEY, ""));
     }
 
     public static void setRestDayToday(@NonNull Context c, boolean rest) {
         state(c).edit()
                 .putBoolean(K_REST_DAY_ENABLED, rest)
-                .putString(K_REST_DAY_KEY, com.focuslife.app.util.TimeUtils.today())
+                .putString(K_REST_DAY_KEY, TimeUtils.today())
                 .apply();
     }
 
@@ -421,7 +437,7 @@ public final class Prefs {
     }
 
     public static void grantUnlock(@NonNull Context c, @NonNull String pkg, long untilMillis) {
-        String today = com.focuslife.app.util.TimeUtils.today();
+        String today = TimeUtils.today();
         SharedPreferences s = unlock(c);
         SharedPreferences.Editor e = s.edit()
                 .putString(K_UNLOCK_PACKAGE, pkg)
@@ -459,7 +475,7 @@ public final class Prefs {
 
     public static int unlockCountToday(@NonNull Context c) {
         SharedPreferences s = unlock(c);
-        if (!com.focuslife.app.util.TimeUtils.today().equals(s.getString(K_UNLOCK_DAY, ""))) {
+        if (!TimeUtils.today().equals(s.getString(K_UNLOCK_DAY, ""))) {
             return 0;
         }
         return s.getInt(K_UNLOCK_COUNT, 0);

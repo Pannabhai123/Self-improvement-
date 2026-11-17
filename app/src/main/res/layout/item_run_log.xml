@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_row"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_m"
+    android:paddingTop="@dimen/space_m"
+    android:paddingEnd="@dimen/space_m"
+    android:paddingBottom="@dimen/space_m">
+
+    <ImageView
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_directions_run"
+        app:tint="@color/accent_500" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_run_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+            tools:text="1.6 km in 24 min" />
+
+        <TextView
+            android:id="@+id/tv_run_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            tools:text="Mon 17 Nov · 15:00 /km · 1600 m timed: 7:42" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_run_delete"
+        android:layout_width="@dimen/touch_target"
+        android:layout_height="@dimen/touch_target"
+        android:background="@drawable/selectable_row"
+        android:contentDescription="@string/action_delete"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/text_tertiary" />
+</LinearLayout>
