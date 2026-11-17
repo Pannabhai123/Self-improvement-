@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A single dashboard metric: icon, value, caption and an optional thin progress
+  line. Reused four times on the home screen through <include>, which is why the
+  ids are generic — ViewBinding gives each include its own scoped binding, so the
+  caller reaches them as metricStudy.tvValue rather than by global id.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.FocusLife.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/card_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_book"
+                app:tint="@color/accent_500" />
+
+            <TextView
+                android:id="@+id/tv_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                tools:text="Total study time" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_value"
+            style="@style/MetricValue"
+            android:layout_marginTop="@dimen/space_s"
+            android:textSize="@dimen/text_subtitle"
+            tools:text="4h 20m" />
+
+        <TextView
+            android:id="@+id/tv_sub"
+            style="@style/MetricCaption"
+            android:layout_marginTop="@dimen/space_xxs"
+            tools:text="of 6h target" />
+
+        <ProgressBar
+            android:id="@+id/pb_metric"
+            style="@style/Widget.FocusLife.ProgressHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/space_s"
+            android:max="100"
+            tools:progress="72" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

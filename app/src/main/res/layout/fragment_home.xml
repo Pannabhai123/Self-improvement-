@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Home / Dashboard.
+
+  Layout logic: the progress ring sits alone at the top because it is the one
+  number the user should be able to read in under a second. Everything below is
+  detail, grouped into cards and ordered by how often it changes during a day —
+  mode and quick actions near the top (things you tap), metrics in the middle
+  (things you read), charts at the bottom (things you reflect on).
+
+  A NestedScrollView rather than a RecyclerView: the content is a fixed set of
+  distinct cards, so a RecyclerView would add adapter and view-type complexity
+  for no recycling benefit.
+-->
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/space_xxl"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ============ Header ============ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gradient_hero"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="@dimen/space_l"
+            android:paddingEnd="@dimen/screen_padding"
+            android:paddingBottom="@dimen/space_xxl">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_greeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        tools:text="Good morning" />
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xxs"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Title"
+                        tools:text="Mon, 17 Nov" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btn_report"
+                    android:layout_width="@dimen/touch_target"
+                    android:layout_height="@dimen/touch_target"
+                    android:background="@drawable/selectable_row"
+                    android:contentDescription="@string/title_daily_report"
+                    android:src="@drawable/ic_assessment"
+                    app:tint="@color/text_secondary" />
+            </LinearLayout>
+
+            <!-- ============ Progress ring ============ -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <View
+                    android:layout_width="@dimen/ring_dashboard"
+                    android:layout_height="@dimen/ring_dashboard"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_ring_glow" />
+
+                <com.focuslife.app.ui.widget.ProgressRingView
+                    android:id="@+id/ring_progress"
+                    android:layout_width="@dimen/ring_dashboard"
+                    android:layout_height="@dimen/ring_dashboard"
+                    android:layout_gravity="center"
+                    app:prv_animate="true"
+                    app:prv_labelText="@string/dashboard_focus_score"
+                    app:prv_labelTextSize="@dimen/text_caption"
+                    app:prv_max="100"
+                    app:prv_progress="0"
+                    app:prv_showGlow="true"
+                    app:prv_strokeWidth="@dimen/ring_stroke"
+                    app:prv_trackStrokeWidth="@dimen/ring_track_stroke"
+                    app:prv_valueTextSize="44sp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_verdict"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+                tools:text="Solid day. You are on track." />
+
+            <!-- Streak pill -->
+            <LinearLayout
+                android:id="@+id/streak_pill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/space_m"
+                android:background="@drawable/bg_pill_accent"
+                android:gravity="center_vertical"
+                android:minHeight="36dp"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/space_l"
+                android:paddingEnd="@dimen/space_l">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_local_fire"
+                    app:tint="@color/warning_500" />
+
+                <TextView
+                    android:id="@+id/tv_streak"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Label"
+                    android:textColor="@color/text_primary"
+                    tools:text="7 day streak" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="@dimen/space_l"
+            android:paddingEnd="@dimen/screen_padding">
+
+            <!-- ============ Active mode / permission banner ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_mode"
+                style="@style/Widget.FocusLife.Card.Accent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_mode_icon"
+                            android:layout_width="@dimen/icon_size"
+                            android:layout_height="@dimen/icon_size"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_shield"
+                            app:tint="@color/accent_500" />
+
+                        <TextView
+                            android:id="@+id/tv_mode_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_m"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                            tools:text="No mode active" />
+
+                        <TextView
+                            android:id="@+id/tv_mode_elapsed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                            tools:text="1h 05m" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_mode_warning"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        android:textColor="@color/warning_500"
+                        android:visibility="gone"
+                        tools:text="Distraction Guard is off, so apps cannot be intercepted."
+                        tools:visibility="visible" />
+
+                    <!-- Mode chips: one tap to start, tap again to stop -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_modes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        app:chipSpacingHorizontal="@dimen/space_s"
+                        app:chipSpacingVertical="@dimen/space_s"
+                        app:singleLine="false"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_study"
+                            style="@style/Widget.FocusLife.Chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mode_study" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_run"
+                            style="@style/Widget.FocusLife.Chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mode_run" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_sleep"
+                            style="@style/Widget.FocusLife.Chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mode_sleep" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_focus_mode"
+                            style="@style/Widget.FocusLife.Chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mode_deep_focus" />
+                    </com.google.android.material.chip.ChipGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Metric grid ============ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/metric_study"
+                    layout="@layout/item_metric_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_s"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/metric_focus"
+                    layout="@layout/item_metric_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/metric_screen"
+                    layout="@layout/item_metric_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_s"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/metric_tasks"
+                    layout="@layout/item_metric_card"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- ============ Remaining goals ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/dashboard_remaining_goals" />
+
+                    <TextView
+                        android:id="@+id/tv_remaining_goals"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                        tools:text="3 goals left" />
+
+                    <ProgressBar
+                        android:id="@+id/pb_goals"
+                        style="@style/Widget.FocusLife.ProgressHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:max="100"
+                        tools:progress="40" />
+
+                    <TextView
+                        android:id="@+id/tv_goals_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        tools:text="About 2h 30m of work left" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Fitness ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/CardTitle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="@string/dashboard_fitness" />
+
+                        <TextView
+                            android:id="@+id/btn_log_run"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/selectable_row"
+                            android:minHeight="@dimen/touch_target"
+                            android:gravity="center"
+                            android:paddingStart="@dimen/space_s"
+                            android:paddingEnd="@dimen/space_s"
+                            android:text="@string/fitness_log_run"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Label"
+                            android:textColor="@color/accent_500" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_run_distance"
+                                style="@style/MetricValue"
+                                tools:text="1.6 km" />
+
+                            <TextView
+                                android:id="@+id/tv_run_target"
+                                style="@style/MetricCaption"
+                                tools:text="of 1600 m target" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_workouts"
+                                style="@style/MetricValue"
+                                tools:text="2 / 3" />
+
+                            <TextView
+                                style="@style/MetricCaption"
+                                android:text="@string/fitness_exercise_checklist" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/pb_run"
+                        style="@style/Widget.FocusLife.ProgressHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:max="100"
+                        tools:progress="100" />
+
+                    <TextView
+                        android:id="@+id/tv_rest_day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:text="@string/rest_day_today"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        android:textColor="@color/success_500"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Up next ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_next"
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_alarm"
+                        app:tint="@color/accent_500" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_m"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/CardTitle"
+                            android:text="@string/dashboard_next_activity" />
+
+                        <TextView
+                            android:id="@+id/tv_next_activity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_xxs"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                            tools:text="Mathematics at 08:00 AM" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_tertiary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Quick actions ============ -->
+            <TextView
+                style="@style/CardTitle"
+                android:layout_marginTop="@dimen/space_s"
+                android:text="@string/dashboard_quick_actions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/quick_focus"
+                    layout="@layout/item_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_s"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/quick_control"
+                    layout="@layout/item_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/quick_blocker"
+                    layout="@layout/item_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/space_s"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/quick_fitness"
+                    layout="@layout/item_quick_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_s"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- ============ Weekly chart ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/study_weekly_stats" />
+
+                    <com.focuslife.app.ui.widget.BarChartView
+                        android:id="@+id/chart_study"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/chart_height"
+                        android:layout_marginTop="@dimen/space_m"
+                        app:bcv_highlightLast="true"
+                        app:bcv_showValues="false" />
+
+                    <TextView
+                        android:id="@+id/tv_week_summary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        tools:text="18h 20m this week" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Motivation ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_motivation"
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/dashboard_motivation" />
+
+                    <TextView
+                        android:id="@+id/tv_quote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                        android:textColor="@color/text_primary"
+                        tools:text="Discipline is more important than motivation." />
+
+                    <TextView
+                        android:id="@+id/btn_more_motivation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:background="@drawable/selectable_row"
+                        android:gravity="center"
+                        android:minHeight="@dimen/touch_target"
+                        android:paddingStart="@dimen/space_s"
+                        android:paddingEnd="@dimen/space_s"
+                        android:text="@string/title_motivation"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Label"
+                        android:textColor="@color/accent_500" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

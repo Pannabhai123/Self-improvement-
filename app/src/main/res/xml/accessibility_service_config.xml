@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Focus Life Distraction Guard configuration.
+
+  Deliberately minimal, for two reasons:
+
+  1. PRIVACY. flagRetrieveInteractiveWindows, flagReportViewIds and
+     canRetrieveWindowContent are all left OFF. The service therefore cannot
+     read the content of any window — it only receives the window-state event
+     that carries the foreground package name.
+
+  2. BATTERY. Without content retrieval the service does no window tree
+     traversal, which is the expensive part of an accessibility service. On a
+     Helio G85 this keeps the guard close to free.
+
+  packageNames is NOT set on purpose: an empty packageNames filter means
+  "all packages", which is required because the user's block list can change at
+  any time without re-registering the service. Filtering is done in code
+  against the local block list instead.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/onboarding_step_accessibility_desc"
+    android:notificationTimeout="200"
+    android:summary="@string/accessibility_service_label" />

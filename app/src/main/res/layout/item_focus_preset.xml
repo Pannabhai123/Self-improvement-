@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A focus preset tile: the big number is the focus length, the small line is the
+  break. Sized so the four presets fit two-per-row on a 720p screen without the
+  label wrapping.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.FocusLife.Card.Flat"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/selectable_row">
+
+    <LinearLayout
+        android:id="@+id/preset_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="84dp"
+        android:orientation="vertical"
+        android:padding="@dimen/space_m">
+
+        <TextView
+            android:id="@+id/tv_preset_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textAppearance="@style/TextAppearance.FocusLife.Headline"
+            android:textColor="@color/accent_500"
+            tools:text="25" />
+
+        <TextView
+            android:id="@+id/tv_preset_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            tools:text="5 min break" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

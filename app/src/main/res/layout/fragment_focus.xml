@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/focus_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900"
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/space_xxl"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="@dimen/space_l"
+        android:paddingEnd="@dimen/screen_padding">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title_focus"
+            android:textAppearance="@style/TextAppearance.FocusLife.Headline" />
+
+        <TextView
+            android:id="@+id/tv_today_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            tools:text="3 sessions · 1h 15m focused today" />
+
+        <!-- ============ Current task ============ -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_task"
+            style="@style/Widget.FocusLife.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:hint="@string/focus_task_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences"
+                android:maxLines="2"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_body" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ============ Presets ============ -->
+        <TextView
+            style="@style/CardTitle"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/focus_pomodoro_25_5" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/preset_25_5"
+                layout="@layout/item_focus_preset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/preset_50_10"
+                layout="@layout/item_focus_preset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/preset_break_5"
+                layout="@layout/item_focus_preset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/preset_break_10"
+                layout="@layout/item_focus_preset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- ============ Custom ============ -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.FocusLife.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="@string/focus_custom_duration" />
+
+                <TextView
+                    android:id="@+id/tv_custom_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                    tools:text="25 min focus · 5 min break · 4 rounds" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.FocusLife.TextInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:hint="@string/focus_custom_focus_minutes">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_focus_min"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="3"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.FocusLife.TextInput"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_s"
+                        android:layout_weight="1"
+                        android:hint="@string/focus_custom_break_minutes">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_break_min"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="2"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:text="@string/focus_custom_rounds"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/slider_rounds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:value="4"
+                    android:valueFrom="1"
+                    android:valueTo="12"
+                    app:labelBehavior="visible" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switch_deep"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:minHeight="@dimen/touch_target"
+                    android:text="@string/quick_deep_focus"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/tv_deep_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                    tools:text="Deep Focus Mode on — blocked apps stay blocked" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_start_custom"
+                    style="@style/Widget.FocusLife.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="@dimen/space_l"
+                    android:text="@string/focus_start_deep"
+                    android:textSize="@dimen/text_subtitle"
+                    app:icon="@drawable/ic_play"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/text_on_accent" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ============ History ============ -->
+        <TextView
+            style="@style/CardTitle"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/focus_history" />
+
+        <TextView
+            android:id="@+id/tv_history_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/focus_history_empty"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_focus_session" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
