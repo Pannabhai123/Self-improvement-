@@ -2,12 +2,15 @@ package com.focuslife.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.StrictMode;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
+// androidx.work.Configuration is imported and android.content.res.Configuration is
+// fully qualified at its single use site: both are named Configuration, and the
+// WorkManager one appears three times (the Provider interface, the override and
+// its Builder) against the framework one's single onConfigurationChanged.
 import androidx.work.Configuration;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -138,7 +141,7 @@ public class FocusLifeApp extends Application implements Configuration.Provider 
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // A system language change must not silently undo the user's override.
         applyLanguageOverride();

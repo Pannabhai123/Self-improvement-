@@ -5,6 +5,8 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -90,7 +92,7 @@ public class ControlYourselfActivity extends AppCompatActivity {
 
         b.btnEmergencyFocus.setOnClickListener(v -> startEmergencyFocus());
         b.btnAddEntry.setOnClickListener(v -> showEntryEditor());
-        b.btnAddReason.setOnClickListener(v -> showReasonEditor());
+        b.btnAddReason.setOnClickListener(v -> showReasonEditor(null));
 
         bindMetrics(b);
     }
@@ -461,8 +463,8 @@ public class ControlYourselfActivity extends AppCompatActivity {
         if (existing != null) input.setText(existing.text);
 
         int pad = getResources().getDimensionPixelSize(R.dimen.space_xxl);
-        android.widget.FrameLayout container = new android.widget.FrameLayout(this);
-        android.widget.FrameLayout.LayoutParams lp = new android.widget.FrameLayout.LayoutParams(
+        FrameLayout container = new FrameLayout(this);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.setMargins(pad, pad, pad, 0);
         input.setLayoutParams(lp);

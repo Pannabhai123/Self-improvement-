@@ -8,6 +8,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.focuslife.app.blocking.BlockDecisionEngine;
 import com.focuslife.app.blocking.ModeController;
@@ -16,8 +19,10 @@ import com.focuslife.app.data.db.entity.HabitEntity;
 import com.focuslife.app.data.db.entity.TaskEntity;
 import com.focuslife.app.data.repo.Repository;
 import com.focuslife.app.util.TimeUtils;
+import com.focuslife.app.work.SnoozeWorker;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Handles actions taken directly from a notification, so the user never has to
@@ -152,14 +157,14 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         if (notificationId >= 0) NotifHelper.cancel(context, notificationId);
 
         final String title = TextUtils.isEmpty(slotTitle) ? "" : slotTitle;
-        androidx.work.Data input = new androidx.work.Data.Builder()
+        Data input = new Data.Builder()
                 .putString(SnoozeWorker.INPUT_TITLE, title)
                 .build();
 
-        androidx.work.WorkManager.getInstance(context).enqueue(
-                new androidx.work.OneTimeWorkRequest.Builder(SnoozeWorker.class)
+        WorkManager.getInstance(context).enqueue(
+                new OneTimeWorkRequest.Builder(SnoozeWorker.class)
                         .setInputData(input)
-                        .setInitialDelay(10, java.util.concurrent.TimeUnit.MINUTES)
+                        .setInitialDelay(10, TimeUnit.MINUTES)
                         .build());
     }
 }

@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.focuslife.app.R;
 import com.focuslife.app.blocking.BlockDecisionEngine;
 import com.focuslife.app.ui.MainActivity;
+import com.focuslife.app.ui.report.ReportActivity;
 import com.focuslife.app.util.PermissionManager;
 import com.focuslife.app.util.TimeUtils;
 
@@ -327,8 +328,7 @@ public final class NotifHelper {
                                          @NonNull String dayKey) {
         PendingIntent content = PendingIntent.getActivity(
                 context, 0,
-                new Intent(context, com.focuslife.app.ui.report.ReportActivity.class)
-                        .putExtra(com.focuslife.app.ui.report.ReportActivity.EXTRA_DAY_KEY, dayKey)
+                ReportActivity.forDay(context, dayKey)
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 

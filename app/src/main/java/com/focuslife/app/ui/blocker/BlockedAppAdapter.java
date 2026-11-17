@@ -206,7 +206,6 @@ public class BlockedAppAdapter
             return sb.toString();
         }
 
-        @NonNull
         /** Comma-joins mode names, with "and" before the last one. */
         @NonNull
         private static String joinModes(@NonNull Context context, @NonNull List<String> parts) {

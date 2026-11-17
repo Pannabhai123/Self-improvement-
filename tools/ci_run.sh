@@ -32,7 +32,7 @@ if [ "$rc" -ne 0 ]; then
   # budget before any javac error was shown.
   errors="$(grep -E \
     'error:|warning:|\.java:[0-9]+|\.xml:[0-9]+|\.kt:[0-9]+|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|tests? (completed|failed)|AAPT:' \
-    "$LOG" | grep -vE '^[[:space:]]*at |^[[:space:]]*\.* [0-9]+ tests? completed' | head -n 60)"
+    "$LOG" | grep -vE '^[[:space:]]*at |^[[:space:]]*\.* [0-9]+ tests? completed' | head -n 200)"
 
   # Then the short Gradle summary, which names the failing task and its cause.
   summary="$(grep -E 'What went wrong:|Execution failed for task|A problem occurred' \
@@ -54,7 +54,7 @@ import sys
 s = sys.stdin.read()
 s = s.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
 # Annotations are truncated by the UI; keep it inside a useful budget.
-print(s[:8000], end="")
+print(s[:60000], end="")
 ')"
 
   echo "::error title=${NAME} failed (exit ${rc})::${encoded}"

@@ -243,7 +243,6 @@ public class OnboardingActivity extends AppCompatActivity {
                 : R.string.onboarding_finish_approximate);
     }
 
-    @NonNull
     /** Comma-joins labels for the summary line. */
     @NonNull
     private static String joinLabels(@NonNull List<String> parts) {

@@ -375,7 +375,17 @@ public class ProgressRingView extends View {
     private void updateContentDescription() {
         int percent = max <= 0 ? 0 : Math.round(targetProgress * 100f / max);
         setContentDescription(getContext().getString(R.string.cd_progress_ring, percent));
-        setAccessibilityClassName(android.widget.ProgressBar.class.getName());
+    }
+
+    /**
+     * Announced as a progress bar rather than a generic view, so TalkBack reads
+     * the percentage as a determinate indicator. View exposes no setter for this;
+     * the protected getter is the supported override point.
+     */
+    @NonNull
+    @Override
+    protected CharSequence getAccessibilityClassName() {
+        return android.widget.ProgressBar.class.getName();
     }
 
     private void cancelAnimator() {

@@ -566,7 +566,7 @@ public class UsageAnalyzerActivity extends AppCompatActivity {
      */
     private void editDailyLimit() {
         DialogNumberBinding d = DialogNumberBinding.inflate(LayoutInflater.from(this));
-        d.etNumber.setText(String.valueOf(minutes[0]));
+        d.etNumber.setText(String.valueOf(Prefs.targetScreenMinutes(this)));
         d.fieldNumber.setHint(R.string.label_minutes_short);
         d.tvNumberHint.setText(R.string.usage_limit_hint);
 

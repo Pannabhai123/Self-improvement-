@@ -90,8 +90,12 @@ public class ReportActivity extends AppCompatActivity {
             String restored = savedInstanceState.getString(STATE_DAY_KEY);
             if (!TextUtils.isEmpty(restored)) dayKey = restored;
             weeklyView = savedInstanceState.getBoolean(STATE_WEEKLY, false);
-        } else if (getIntent() != null && getIntent().hasExtra(EXTRA_WEEKLY)) {
+        } else if (getIntent() != null) {
             weeklyView = getIntent().getBooleanExtra(EXTRA_WEEKLY, false);
+            // A notification for a specific day opens on that day rather than
+            // today, so the report the user was just told about is the one they see.
+            String requested = getIntent().getStringExtra(EXTRA_DAY_KEY);
+            if (!TextUtils.isEmpty(requested)) dayKey = requested;
         }
 
         b.toolbar.setNavigationOnClickListener(v -> finish());
@@ -120,10 +124,19 @@ public class ReportActivity extends AppCompatActivity {
     /** Optional extra: open straight into the weekly report. */
     public static final String EXTRA_WEEKLY = "extra_weekly";
 
+    /** Optional extra: open on this day key rather than today. */
+    public static final String EXTRA_DAY_KEY = "extra_day_key";
+
     /** Intent for the daily report. */
     @NonNull
     public static Intent intent(@NonNull Context context) {
         return new Intent(context, ReportActivity.class);
+    }
+
+    /** Intent for the report of one specific day. */
+    @NonNull
+    public static Intent forDay(@NonNull Context context, @NonNull String dayKey) {
+        return new Intent(context, ReportActivity.class).putExtra(EXTRA_DAY_KEY, dayKey);
     }
 
     /** Intent that opens directly on the weekly report. */
@@ -504,7 +517,8 @@ public class ReportActivity extends AppCompatActivity {
 
         String notes = s.improvementNotes;
         boolean empty = TextUtils.isEmpty(notes) || notes.trim().isEmpty();
-        b.tvImprovement.setText(empty ? R.string.report_improvement_none : notes);
+        b.tvImprovement.setText(empty
+                ? getString(R.string.report_improvement_none) : notes);
         b.tvImprovement.setTextColor(getColor(empty
                 ? R.color.success_500 : R.color.text_secondary));
     }

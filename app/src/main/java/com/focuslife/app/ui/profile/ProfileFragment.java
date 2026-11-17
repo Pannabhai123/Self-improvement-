@@ -178,7 +178,11 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
     private void renderSummary(@NonNull FragmentProfileBinding b,
                                @NonNull Repository.LifetimeStats s) {
         b.summaryContainer.removeAllViews();
-        LayoutInflater inflater = LayoutInflater.from(this);
+        // Reached from a background callback, so the fragment may have detached
+        // between the query and this line.
+        Context context = getContext();
+        if (context == null) return;
+        LayoutInflater inflater = LayoutInflater.from(context);
 
         addSummaryMetric(inflater, b, R.drawable.ic_book, R.string.profile_total_study,
                 TimeUtils.formatMinutes(s.totalStudyMinutes), R.color.accent_500);
@@ -261,7 +265,7 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
         b.targetContainer.removeAllViews();
         Context context = getContext();
         if (context == null) return;
-        LayoutInflater inflater = LayoutInflater.from(this);
+        LayoutInflater inflater = LayoutInflater.from(context);
 
         addTargetRow(inflater, b, R.string.profile_target_study,
                 TimeUtils.formatMinutes(Prefs.targetStudyMinutes(context)),
@@ -313,12 +317,13 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
 
     private void showNumberEditor(@StringRes int titleRes, int currentValue,
                                   int min, int max, @NonNull TargetWriter writer) {
-        DialogNumberBinding d = DialogNumberBinding.inflate(LayoutInflater.from(this));
+        DialogNumberBinding d =
+                DialogNumberBinding.inflate(LayoutInflater.from(requireContext()));
         d.fieldNumber.setHint(titleRes);
         d.etNumber.setText(String.valueOf(currentValue));
         d.tvNumberHint.setText(getString(R.string.profile_target_range, min, max));
 
-        new MaterialAlertDialogBuilder(this)
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(titleRes)
                 .setView(d.getRoot())
                 .setNegativeButton(R.string.action_cancel, null)
@@ -508,7 +513,7 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
     // ------------------------------------------------------------------
 
     private void confirmResetDay() {
-        new MaterialAlertDialogBuilder(this)
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.profile_reset_day)
                 .setMessage(R.string.profile_reset_day_confirm)
                 .setNegativeButton(R.string.action_cancel, null)
@@ -534,11 +539,11 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
 
     private void confirmEraseAll() {
         DialogTypedConfirmBinding d = DialogTypedConfirmBinding
-                .inflate(LayoutInflater.from(this));
+                .inflate(LayoutInflater.from(requireContext()));
         d.tvConfirmMessage.setText(R.string.profile_reset_all_confirm);
         d.fieldConfirm.setHint(ERASE_CONFIRM_WORD);
 
-        new MaterialAlertDialogBuilder(this)
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.profile_reset_all)
                 .setView(d.getRoot())
                 .setNegativeButton(R.string.action_cancel, null)
