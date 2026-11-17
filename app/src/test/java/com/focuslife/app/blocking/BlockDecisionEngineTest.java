@@ -84,9 +84,11 @@ public class BlockDecisionEngineTest {
     public void unknownModeStringIsNormalisedToNoneAndDoesNotBlock() {
         BlockedAppEntity a = app(INSTAGRAM);
         a.blockAlways = false;
+        // The helper supplies the clock and day fields; this case only cares that
+        // an unrecognised mode string degrades to MODE_NONE instead of blocking.
         BlockDecisionEngine.Snapshot s = snapshot(
                 Collections.singletonList(a), Collections.emptyList(),
-                "not-a-real-mode", null, false, MINUTE_10AM, TUESDAY, TODAY);
+                "not-a-real-mode", null, false);
 
         assertEquals(BlockDecisionEngine.MODE_NONE, s.activeMode);
         assertFalse("an unrecognised mode must not block anything by itself",

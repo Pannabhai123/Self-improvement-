@@ -140,7 +140,11 @@ public class FocusScoreCalculatorTest {
         d.studyMinutes = 600; // ten times the target
         Result r = FocusScoreCalculator.compute(d);
         assertEquals(100, r.score);
-        assertTrue(r.progressPercent <= 100);
+        // The point of the cap: the component earns its weight and no more, so ten
+        // times the target is 26 points rather than 260. Without that, one
+        // component could carry the whole score and hide the rest of the day.
+        assertEquals(FocusScoreCalculator.W_STUDY, r.studyPoints);
+        assertEquals(FocusScoreCalculator.W_STUDY, r.applicableWeight);
     }
 
     @Test
