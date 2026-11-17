@@ -5,9 +5,10 @@
   Deliberately minimal, for two reasons:
 
   1. PRIVACY. flagRetrieveInteractiveWindows, flagReportViewIds and
-     canRetrieveWindowContent are all left OFF. The service therefore cannot
-     read the content of any window — it only receives the window-state event
-     that carries the foreground package name.
+     canRetrieveWindowContent are all left OFF, and no content-change event type
+     is requested. The service therefore cannot read the content of any window —
+     it only receives window-state events, which carry the foreground package
+     name and nothing else.
 
   2. BATTERY. Without content retrieval the service does no window tree
      traversal, which is the expensive part of an accessibility service. On a
@@ -19,7 +20,16 @@
   against the local block list instead.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+    <!--
+      Exactly the two event types the service implements, and no others.
+
+      This used to request typeWindowContentChanged, which fires on every text or
+      subtree change anywhere on screen - by far the chattiest accessibility event
+      - while the handler discarded all of them. Delivering events only to ignore
+      them is pure battery cost on a Helio G85. Conversely typeWindowsChanged was
+      handled in code but never requested, so that branch could not run.
+    -->
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowsChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="false"
