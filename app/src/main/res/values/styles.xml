@@ -350,3 +350,23 @@
     </style>
 
 </resources>
+
+    <!--
+      Day-of-week toggle inside the routine editor.
+
+      Seven of these share a 360dp row, so they need tighter padding and a
+      smaller label than a normal outlined button, or the group overflows and
+      the last day becomes unreachable.
+    -->
+    <style name="Widget.FocusLife.Button.Outlined.DayToggle">
+        <item name="android:insetLeft">1dp</item>
+        <item name="android:insetRight">1dp</item>
+        <item name="android:insetTop">2dp</item>
+        <item name="android:insetBottom">2dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:textSize">@dimen/text_label</item>
+        <item name="cornerRadius">10dp</item>
+    </style>

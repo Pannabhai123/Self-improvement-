@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Add / edit one routine slot. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xxl"
+        android:paddingTop="@dimen/space_l"
+        android:paddingEnd="@dimen/space_xxl"
+        android:paddingBottom="@dimen/space_s">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.FocusLife.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/routine_activity">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="60"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ============ Time ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/routine_time"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_time"
+            style="@style/Widget.FocusLife.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="@dimen/space_s"
+            android:fontFeatureSettings="tnum"
+            android:textSize="@dimen/text_headline"
+            app:icon="@drawable/ic_alarm"
+            app:iconGravity="textStart" />
+
+        <!-- ============ Category ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/routine_category"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true" />
+        </HorizontalScrollView>
+
+        <!-- ============ Lead time ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/routine_remind_before"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_remind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            app:selectionRequired="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_remind_0"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/routine_remind_0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_remind_5"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/routine_remind_5" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_remind_10"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/routine_remind_10" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_remind_15"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/routine_remind_15" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_remind_30"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/routine_remind_30" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <!-- ============ Days ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/routine_days"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            app:singleSelection="false">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_sun"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_sun" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_mon"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_mon" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_tue"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_tue" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_wed"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_wed" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_thu"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_thu" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_fri"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_fri" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_sat"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_sat" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/routine_enabled"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+            android:textColor="@color/text_primary" />
+
+    </LinearLayout>
+</ScrollView>

@@ -494,6 +494,24 @@
 
     <!-- ==================== Daily routine ==================== -->
     <string name="title_routine">दैनिक दिनचर्या</string>
+    <string name="routine_category">श्रेणी</string>
+    <string name="routine_days">दिन</string>
+    <string name="routine_empty">अभी कोई दिनचर्या नहीं। अपना दिन बनाने वाले समय जोड़ें।</string>
+    <string name="perm_grant">अनुमति दें</string>
+    <string name="weekday_initial_sun">र</string>
+    <string name="weekday_initial_mon">सो</string>
+    <string name="weekday_initial_tue">मं</string>
+    <string name="weekday_initial_wed">बु</string>
+    <string name="weekday_initial_thu">गु</string>
+    <string name="weekday_initial_fri">शु</string>
+    <string name="weekday_initial_sat">श</string>
+    <string name="category_wake">जागना</string>
+    <string name="category_fitness">व्यायाम</string>
+    <string name="category_meals">भोजन</string>
+    <string name="category_study">पढ़ाई</string>
+    <string name="category_rest">आराम</string>
+    <string name="category_sleep">नींद</string>
+    <string name="category_other">अन्य</string>
     <string name="routine_subtitle">आपका दिन, आपके क्रम में। कोई भी समय बदलें।</string>
     <string name="routine_now">अभी</string>
     <string name="routine_next">अगला</string>
@@ -502,12 +520,18 @@
     <string name="routine_time">समय</string>
     <string name="routine_activity">क्रियाकलाप</string>
     <string name="routine_remind_before">पहले याद दिलाएँ</string>
+    <string name="routine_remind_before_at">%1$d मिनट पहले याद दिलाएँ</string>
     <string name="routine_remind_0">उसी समय</string>
     <string name="routine_remind_5">5 मिनट पहले</string>
     <string name="routine_remind_10">10 मिनट पहले</string>
     <string name="routine_remind_15">15 मिनट पहले</string>
     <string name="routine_remind_30">30 मिनट पहले</string>
     <string name="routine_enabled">अनुस्मारकों में शामिल करें</string>
+    <string name="routine_now_since">%1$s से · अगला: %2$s</string>
+    <string name="routine_last_slot">आगे कुछ निर्धारित नहीं</string>
+    <string name="routine_delete_confirm">अपनी दिनचर्या से “%1$s” हटाएँ?</string>
+    <string name="routine_reminder_now">%1$s का समय</string>
+    <string name="routine_reminder_upcoming">%2$s पर %1$s</string>
     <string name="routine_reset">डिफ़ॉल्ट अनुसूची बहाल करें</string>
     <string name="routine_reset_confirm">आपकी वर्तमान अनुसूची को 13 डिफ़ॉल्ट खंडों से बदलें?</string>
     <string name="routine_reset_done">डिफ़ॉल्ट अनुसूची बहाल हुई</string>

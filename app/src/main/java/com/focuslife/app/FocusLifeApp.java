@@ -89,6 +89,10 @@ public class FocusLifeApp extends Application implements Configuration.Provider 
         schedulePeriodicWork();
         warmCachesAsync();
         reArmActiveMode();
+
+        // Alarms do not survive process death reliably on every OEM ROM, so the
+        // next routine reminder is re-armed on each cold start. It is idempotent.
+        com.focuslife.app.notify.RoutineAlarmScheduler.scheduleNext(this);
     }
 
     /**

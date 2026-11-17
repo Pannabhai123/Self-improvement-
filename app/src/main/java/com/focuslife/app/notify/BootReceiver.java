@@ -97,6 +97,11 @@ public class BootReceiver extends BroadcastReceiver {
                 new PeriodicWorkRequest.Builder(DailyReportWorker.class, 24, TimeUnit.HOURS)
                         .setInitialDelay(10, TimeUnit.MINUTES)
                         .build());
+
+        // AlarmManager drops every pending alarm across a reboot, so the next
+        // routine reminder has to be armed again here rather than waiting for the
+        // polling worker to notice.
+        RoutineAlarmScheduler.scheduleNext(context);
     }
 
     /**

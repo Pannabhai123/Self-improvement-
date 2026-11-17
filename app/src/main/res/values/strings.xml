@@ -492,6 +492,24 @@
 
     <!-- ==================== Daily routine ==================== -->
     <string name="title_routine">Daily Routine</string>
+    <string name="routine_category">Category</string>
+    <string name="routine_days">Days</string>
+    <string name="routine_empty">No routine yet. Add the slots that make up your day.</string>
+    <string name="perm_grant">Allow</string>
+    <string name="weekday_initial_sun">S</string>
+    <string name="weekday_initial_mon">M</string>
+    <string name="weekday_initial_tue">T</string>
+    <string name="weekday_initial_wed">W</string>
+    <string name="weekday_initial_thu">T</string>
+    <string name="weekday_initial_fri">F</string>
+    <string name="weekday_initial_sat">S</string>
+    <string name="category_wake">Wake up</string>
+    <string name="category_fitness">Fitness</string>
+    <string name="category_meals">Meals</string>
+    <string name="category_study">Study</string>
+    <string name="category_rest">Rest</string>
+    <string name="category_sleep">Sleep</string>
+    <string name="category_other">Other</string>
     <string name="routine_subtitle">Your day, in your order. Edit any slot.</string>
     <string name="routine_now">Now</string>
     <string name="routine_next">Next</string>
@@ -500,12 +518,18 @@
     <string name="routine_time">Time</string>
     <string name="routine_activity">Activity</string>
     <string name="routine_remind_before">Remind me before</string>
+    <string name="routine_remind_before_at">Remind %1$d min before</string>
     <string name="routine_remind_0">At the time</string>
     <string name="routine_remind_5">5 minutes before</string>
     <string name="routine_remind_10">10 minutes before</string>
     <string name="routine_remind_15">15 minutes before</string>
     <string name="routine_remind_30">30 minutes before</string>
     <string name="routine_enabled">Include in reminders</string>
+    <string name="routine_now_since">Since %1$s · next: %2$s</string>
+    <string name="routine_last_slot">nothing else scheduled</string>
+    <string name="routine_delete_confirm">Remove “%1$s” from your routine?</string>
+    <string name="routine_reminder_now">Time for %1$s</string>
+    <string name="routine_reminder_upcoming">%1$s at %2$s</string>
     <string name="routine_reset">Restore the default schedule</string>
     <string name="routine_reset_confirm">Replace your current schedule with the 13 default slots?</string>
     <string name="routine_reset_done">Default schedule restored</string>

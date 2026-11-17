@@ -158,6 +158,32 @@
             android:label="@string/title_daily_report"
             android:parentActivityName=".ui.MainActivity" />
 
+        <activity
+            android:name=".ui.fitness.FitnessActivity"
+            android:exported="false"
+            android:label="@string/title_fitness"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.motivation.MotivationActivity"
+            android:exported="false"
+            android:label="@string/title_motivation"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.routine.RoutineActivity"
+            android:exported="false"
+            android:label="@string/title_routine"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- Reads UsageStatsManager only. No INTERNET permission is declared
+             anywhere in this manifest, so usage data cannot leave the device. -->
+        <activity
+            android:name=".ui.usage.UsageAnalyzerActivity"
+            android:exported="false"
+            android:label="@string/title_usage"
+            android:parentActivityName=".ui.MainActivity" />
+
         <!-- ==================== FOREGROUND SERVICE ==================== -->
         <!-- Drives Study / Running / Sleep / Deep Focus modes and the
              accessibility block check. specialUse because it guards the

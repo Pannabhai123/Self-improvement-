@@ -79,6 +79,12 @@ public class ReminderWorker extends Worker {
             if (posted > 0) {
                 Log.i(TAG, "posted " + posted + " reminder(s)");
             }
+
+            // Keep the precise alarm pointed at the next slot. This is what makes
+            // the poll and the alarm cooperate: the poll guarantees delivery, the
+            // alarm guarantees punctuality, and each pass re-syncs them.
+            com.focuslife.app.notify.RoutineAlarmScheduler.scheduleNext(context);
+
             return Result.success();
         } catch (Exception e) {
             Log.e(TAG, "reminder pass failed", e);

@@ -64,6 +64,9 @@ public final class Prefs {
     private static final String K_STUDY_TIMER_EXAM = "study_timer_exam";
     private static final String K_STUDY_TIMER_TOPIC = "study_timer_topic_id";
 
+    /** Epoch millis of the armed routine alarm; 0 when none is pending. */
+    private static final String K_NEXT_ROUTINE_ALARM = "next_routine_alarm_at";
+
     // ---- Emergency unlock ----
     private static final String K_UNLOCK_UNTIL = "unlock_until";
     private static final String K_UNLOCK_PACKAGE = "unlock_package";
@@ -260,6 +263,21 @@ public final class Prefs {
 
     public static boolean isStudyTimerRunning(@NonNull Context c) {
         return studyTimerStartedAt(c) > 0L;
+    }
+
+    /**
+     * When the next routine reminder is armed, or 0 when nothing is pending.
+     *
+     * <p>Diagnostic only — the alarm itself is owned by AlarmManager. Recording
+     * the instant lets the routine screen tell the user whether a reminder is
+     * queued rather than leaving them to guess.</p>
+     */
+    public static long nextRoutineAlarmAt(@NonNull Context c) {
+        return state(c).getLong(K_NEXT_ROUTINE_ALARM, 0L);
+    }
+
+    public static void setNextRoutineAlarmAt(@NonNull Context c, long millis) {
+        state(c).edit().putLong(K_NEXT_ROUTINE_ALARM, millis).apply();
     }
 
     // ------------------------------------------------------------------
