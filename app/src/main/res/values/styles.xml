@@ -103,6 +103,28 @@
         <item name="boxCornerRadiusBottomEnd">@dimen/card_radius_small</item>
     </style>
 
+    <!--
+      Dropdown variant, for the exam / subject / task-category pickers.
+
+      ExposedDropdownMenu is what makes TextInputLayout render its end arrow and
+      drive a MaterialAutoCompleteTextView as a non-editable list. Without this
+      parent the field looks like ordinary free text and gives no affordance that
+      tapping it opens a choice, which is the whole point of those dialogs.
+    -->
+    <style name="Widget.FocusLife.TextInput.ExposedDropdown"
+           parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/accent_600</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">@dimen/card_radius_small</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/card_radius_small</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/card_radius_small</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/card_radius_small</item>
+        <item name="hintTextColor">@color/accent_500</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
+        <item name="endIconTint">@color/text_secondary</item>
+    </style>
+
     <!-- ============================================================
          Selection controls
          ============================================================ -->
