@@ -36,8 +36,39 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # The ubuntu-latest runner image already ships the Android SDK with
+      # ANDROID_HOME set, so this step locates it, accepts licences and makes sure
+      # the platform and build-tools this project compiles against are present.
+      # It deliberately does not depend on a third-party action: an action that
+      # re-downloads command-line tools is a single point of failure which aborts
+      # the whole job before any compilation happens.
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK" ]; then
+            echo "::error::Android SDK not found at $SDK"
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          echo "SDK: $SDK"
+
+          SDKMANAGER="$(find "$SDK/cmdline-tools" -type f -name sdkmanager \
+                          -path '*/bin/*' 2>/dev/null | sort | tail -n1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::sdkmanager not found under $SDK/cmdline-tools"
+            find "$SDK" -maxdepth 2 -type d | sort
+            exit 1
+          fi
+          echo "sdkmanager: $SDKMANAGER"
+
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-34" \
+                        "build-tools;34.0.0" > /dev/null
+
+          echo "platforms:  $(ls "$SDK/platforms" 2>/dev/null | tr '\n' ' ')"
+          echo "build-tools: $(ls "$SDK/build-tools" 2>/dev/null | tr '\n' ' ')"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -62,11 +93,20 @@ jobs:
           echo "/opt/gradle/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
           gradle --version
 
+      # Generated in a throwaway directory on purpose. Running `gradle wrapper` in
+      # the project root makes Gradle evaluate settings.gradle and the Android
+      # build script first, so it would resolve AGP before the wrapper exists.
       - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.7 --distribution-type bin
-
-      - name: Accept SDK licences
-        run: yes | sdkmanager --licenses > /dev/null || true
+        run: |
+          set -euo pipefail
+          TMP="$(mktemp -d)"
+          ( cd "$TMP" && gradle wrapper --gradle-version 8.7 --distribution-type bin -q )
+          mkdir -p gradle/wrapper
+          cp "$TMP/gradle/wrapper/gradle-wrapper.jar" gradle/wrapper/
+          cp "$TMP/gradle/wrapper/gradle-wrapper.properties" gradle/wrapper/
+          cp "$TMP/gradlew" "$TMP/gradlew.bat" .
+          chmod +x gradlew
+          ./gradlew --version
 
       - name: Unit tests (JVM — scoring, date & usage logic)
         run: ./gradlew testDebugUnitTest --stacktrace
@@ -136,21 +176,44 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Set up Android SDK
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          SDKMANAGER="$(find "$SDK/cmdline-tools" -type f -name sdkmanager \
+                          -path '*/bin/*' 2>/dev/null | sort | tail -n1)"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-34" \
+                        "build-tools;34.0.0" > /dev/null
 
       - name: Decode keystore
-        if: env.FOCUSLIFE_KEYSTORE_B64 != ''
         env:
           FOCUSLIFE_KEYSTORE_B64: ${{ secrets.FOCUSLIFE_KEYSTORE_B64 }}
         run: |
+          if [ -z "${FOCUSLIFE_KEYSTORE_B64:-}" ]; then
+            echo "::error::FOCUSLIFE_KEYSTORE_B64 is not set. This job needs the four signing secrets; see docs/INSTALL.md."
+            exit 1
+          fi
           echo "$FOCUSLIFE_KEYSTORE_B64" | base64 -d > /tmp/release.jks
+          echo "keystore decoded to /tmp/release.jks
 
       - name: Bootstrap Gradle & wrapper
         run: |
+          set -euo pipefail
           curl -fsSL -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
           sudo unzip -q /tmp/gradle.zip -d /opt/gradle
           echo "/opt/gradle/gradle-8.7/bin" >> "$GITHUB_PATH"
-          gradle wrapper --gradle-version 8.7 --distribution-type bin
+          # Generated outside the project root so Gradle does not have to resolve
+          # AGP before the wrapper exists. See the build job for the reasoning.
+          TMP="$(mktemp -d)"
+          ( cd "$TMP" && gradle wrapper --gradle-version 8.7 --distribution-type bin -q )
+          mkdir -p gradle/wrapper
+          cp "$TMP/gradle/wrapper/gradle-wrapper.jar" gradle/wrapper/
+          cp "$TMP/gradle/wrapper/gradle-wrapper.properties" gradle/wrapper/
+          cp "$TMP/gradlew" "$TMP/gradlew.bat" .
+          chmod +x gradlew
 
       - name: Assemble release
         env:
