@@ -18,6 +18,7 @@
     <string name="nav_profile">Profile</string>
 
     <!-- ==================== Common ==================== -->
+    <string name="action_undo">Undo</string>
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
@@ -186,6 +187,8 @@
     <string name="block_step_1">1. Put your phone away</string>
     <string name="block_step_2">2. Drink some water</string>
     <string name="block_step_3">3. Take a short walk</string>
+    <string name="block_privacy_note">Focus Life only reads which app is in the foreground. It never reads your messages, photos or anything inside an app.</string>
+    <string name="control_tap_next_reason">Tap to read another reason</string>
     <string name="block_step_4">4. Return to your current task</string>
     <string name="block_strict_notice">This app is in strict mode. There is no bypass.</string>
 
@@ -200,6 +203,7 @@
     <string name="emergency_hold_to_unlock">Press and hold for 5 seconds to unlock</string>
     <string name="emergency_unlocked">Unlocked for %1$d minutes</string>
     <string name="emergency_unlock_minutes">Unlock duration</string>
+    <string name="emergency_back_to_task">Go back to my task</string>
     <string name="emergency_cancelled">Unlock cancelled. Good decision.</string>
     <string name="emergency_used_today">Emergency unlocks used today: %1$d</string>
     <string name="emergency_cooldown">Too soon. Emergency unlock is available again in %1$s.</string>
@@ -248,6 +252,11 @@
     <string name="focus_summary_break_word">break</string>
     <string name="focus_summary_no_break">no break</string>
 
+    <string name="priority_label">Priority</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_normal">Normal</string>
+    <string name="priority_high">High</string>
+
     <!-- ==================== Study planner ==================== -->
     <string name="title_study">Study Planner</string>
     <string name="study_exams">Exam</string>
@@ -261,12 +270,19 @@
     <string name="study_completed_of">%1$d of %2$d topics complete</string>
     <string name="study_timer">Study timer</string>
     <string name="study_timer_start">Start timing</string>
+    <string name="study_timer_stop">Stop timer</string>
     <string name="study_timer_running">Timing %1$s · %2$s</string>
     <string name="study_revision_due">Revision due</string>
     <string name="study_revision_due_count">%1$d topic due for revision</string>
     <string name="study_revision_due_count_plural">%1$d topics due for revision</string>
     <string name="study_revision_none">No revisions due. Your spacing is on track.</string>
-    <string name="study_revision_done">Revision logged. Next one scheduled.</string>
+    <string name="study_revision_done">Revision logged for %1$s. Next one in %2$d days.</string>
+    <string name="label_all">All</string>
+    <string name="study_timer_elapsed">%1$s · %2$s</string>
+    <string name="study_timer_too_short">Less than a minute — not logged. Start again when you are ready.</string>
+    <string name="study_logged_minutes">%1$d minutes of study logged</string>
+    <string name="study_invalid_minutes">Enter 1 to 1440 minutes</string>
+    <string name="study_log_manual_hint">For study you did away from the phone. It counts exactly the same as timer time.</string>
     <string name="study_progress_report">Daily progress report</string>
     <string name="study_weekly_stats">Weekly study statistics</string>
     <string name="study_minutes_today">%1$s studied today</string>

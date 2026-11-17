@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The full-screen interception shown over a blocked app.
+
+  Reading order is deliberate: the reason the user wrote for themselves comes
+  first, then the four-step reset routine, and only then the exits. A screen
+  that opens with a button gets bypassed in a day; one that opens with the
+  user's own words has a chance.
+
+  Everything below `btn_wait` stays disabled while the cooldown runs, so the
+  bypass is never a reflex.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/block_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient_block"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="@dimen/space_xxl"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="@dimen/space_xxl">
+
+        <!-- ============ Header ============ -->
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_shield"
+            app:tint="@color/accent_500" />
+
+        <TextView
+            android:id="@+id/block_app_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.FocusLife.Overline"
+            tools:text="YOUTUBE" />
+
+        <TextView
+            android:id="@+id/block_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/block_title"
+            android:textAppearance="@style/TextAppearance.FocusLife.Title"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_display_small" />
+
+        <TextView
+            android:id="@+id/block_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:lineSpacingExtra="4dp"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+            tools:text="You blocked YouTube yourself, at a calmer moment." />
+
+        <TextView
+            android:id="@+id/block_mode_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:background="@drawable/bg_pill_accent"
+            android:paddingStart="@dimen/space_l"
+            android:paddingTop="@dimen/space_s"
+            android:paddingEnd="@dimen/space_l"
+            android:paddingBottom="@dimen/space_s"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label"
+            android:textColor="@color/accent_500"
+            android:visibility="gone"
+            tools:text="Deep Focus Mode · running"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/block_session_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label"
+            android:textColor="@color/success_500"
+            android:visibility="gone"
+            tools:text="Session in progress · 18:20 remaining"
+            tools:visibility="visible" />
+
+        <!-- ============ The user's own reason ============ -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/reason_card"
+            style="@style/Widget.FocusLife.Card.Accent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/block_your_reason"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Overline" />
+
+                <TextView
+                    android:id="@+id/reason_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:lineSpacingExtra="4dp"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                    android:textColor="@color/text_primary"
+                    tools:text="I am preparing for Railway Group D. Every hour on my phone is an hour off that." />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:text="@string/control_tap_next_reason"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ============ The four-step reset routine ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:text="@string/block_steps_title"
+            android:textAppearance="@style/TextAppearance.FocusLife.Title" />
+
+        <include
+            android:id="@+id/step_row_1"
+            layout="@layout/item_reset_step" />
+
+
+        <include
+            android:id="@+id/step_row_2"
+            layout="@layout/item_reset_step" />
+
+
+        <include
+            android:id="@+id/step_row_3"
+            layout="@layout/item_reset_step" />
+
+
+        <include
+            android:id="@+id/step_row_4"
+            layout="@layout/item_reset_step" />
+
+
+        <!-- ============ Strict-mode notice ============ -->
+        <TextView
+            android:id="@+id/strict_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:background="@drawable/bg_pill"
+            android:padding="@dimen/space_m"
+            android:text="@string/block_strict_notice"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+            android:textColor="@color/warning_500"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- ============ Cooldown ============ -->
+        <ProgressBar
+            android:id="@+id/cooldown_bar"
+            style="@style/Widget.FocusLife.ProgressHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="@dimen/space_l"
+            android:max="100"
+            android:visibility="gone"
+            tools:progress="40"
+            tools:visibility="visible" />
+
+        <!-- ============ Exits ============ -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_wait"
+            style="@style/Widget.FocusLife.Button"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/block_action_go_back"
+            android:textSize="@dimen/text_subtitle"
+            app:icon="@drawable/ic_check_circle"
+            app:iconGravity="textStart"
+            app:iconTint="@color/text_on_accent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_go_back"
+            style="@style/Widget.FocusLife.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/block_action_go_back" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_log_distraction"
+                style="@style/Widget.FocusLife.Button.Text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
+                android:layout_weight="1"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/block_log_distraction" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_emergency"
+                style="@style/Widget.FocusLife.Button.Text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/emergency_title" />
+        </LinearLayout>
+
+        <!-- Hidden entirely in strict mode, which is the point of strict mode. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_anyway"
+            style="@style/Widget.FocusLife.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/block_action_open_anyway"
+            android:textColor="@color/danger_500" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:gravity="center"
+            android:text="@string/block_privacy_note"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+    </LinearLayout>
+</ScrollView>

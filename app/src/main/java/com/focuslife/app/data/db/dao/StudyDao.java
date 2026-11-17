@@ -42,6 +42,16 @@ public interface StudyDao {
     @Query("SELECT * FROM study_topics ORDER BY exam ASC, subject ASC, id ASC")
     LiveData<List<StudyTopicEntity>> observeAllTopics();
 
+    /**
+     * Synchronous read of every topic.
+     *
+     * <p>The planner filters by exam and subject in memory, because the filters
+     * change on every chip tap and a syllabus is a few hundred rows at most —
+     * four extra filtered queries per tap costs more than one full read.</p>
+     */
+    @Query("SELECT * FROM study_topics ORDER BY exam ASC, subject ASC, id ASC")
+    List<StudyTopicEntity> allTopics();
+
     @Query("SELECT * FROM study_topics WHERE exam = :exam ORDER BY subject ASC, id ASC")
     LiveData<List<StudyTopicEntity>> observeTopicsForExam(String exam);
 

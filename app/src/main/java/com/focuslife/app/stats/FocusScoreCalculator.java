@@ -447,8 +447,15 @@ public final class FocusScoreCalculator {
         return clamp((int) Math.round(value * (double) weight / target), 0, weight);
     }
 
-    static int clamp(int v, int lo, int hi) {
-        return v < lo ? lo : (Math.min(v, hi));
+    /**
+     * Bounds a value.
+     *
+     * <p>Public because screens outside this package derive their own percentages
+     * (habit completion, topic progress) and must clamp with the same bounds the
+     * score engine uses, or a chart and the score can disagree.</p>
+     */
+    public static int clamp(int v, int lo, int hi) {
+        return v < lo ? lo : Math.min(v, hi);
     }
 
     private static Improvement pickTop(Improvement... candidates) {

@@ -88,8 +88,16 @@ public class EmergencyUnlockActivity extends AppCompatActivity {
                 R.string.emergency_used_today, Prefs.unlockCountToday(this)));
 
         binding.radioReasons.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
+            // The free-text field belongs to the "custom" option, not to
+            // "other": showing it on the wrong button meant typed reasons were
+            // never read back, and selectedReason() would silently fall through
+            // to the canned string.
             binding.customReasonField.setVisibility(
-                    checkedId == R.id.radio_other ? View.VISIBLE : View.GONE);
+                    checkedId == R.id.radio_custom ? View.VISIBLE : View.GONE);
+            if (checkedId != R.id.radio_custom) {
+                binding.customReasonInput.setText("");
+                binding.customReasonInput.setError(null);
+            }
         });
 
         wireHold();
@@ -142,7 +150,7 @@ public class EmergencyUnlockActivity extends AppCompatActivity {
     }
 
     private void wireHold() {
-        binding.holdHint.setText(R.string.emergency_hold_to_unlock);
+        binding.holdHint.setText(R.string.block_cooldown_hint);
 
         ModeController.attachHoldToComplete(
                 binding.holdUnlock,

@@ -218,12 +218,24 @@ public class BlockWarningActivity extends AppCompatActivity {
         });
     }
 
-    /** The four-step reset routine from the brief. */
+    /**
+     * The four-step reset routine from the brief.
+     *
+     * <p>Each row is an {@code <include>} of the shared step layout, so the same
+     * four lines render identically here and inside Control Yourself and the
+     * wording can never drift between the two screens.</p>
+     */
     private void renderSteps() {
-        binding.step1.setText(R.string.block_step_1);
-        binding.step2.setText(R.string.block_step_2);
-        binding.step3.setText(R.string.block_step_3);
-        binding.step4.setText(R.string.block_step_4);
+        bindStep(binding.stepRow1, "1", R.string.block_step_1);
+        bindStep(binding.stepRow2, "2", R.string.block_step_2);
+        bindStep(binding.stepRow3, "3", R.string.block_step_3);
+        bindStep(binding.stepRow4, "4", R.string.block_step_4);
+    }
+
+    private void bindStep(@NonNull com.focuslife.app.databinding.ItemResetStepBinding row,
+                          @NonNull String number, int textRes) {
+        row.tvStepNumber.setText(number);
+        row.tvStepText.setText(textRes);
     }
 
     private void wireActions() {

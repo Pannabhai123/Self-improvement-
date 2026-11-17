@@ -20,6 +20,7 @@
     <string name="nav_profile">प्रोफ़ाइल</string>
 
     <!-- ==================== Common ==================== -->
+    <string name="action_undo">वापस लें</string>
     <string name="action_save">सहेजें</string>
     <string name="action_cancel">रद्द करें</string>
     <string name="action_delete">हटाएँ</string>
@@ -188,6 +189,8 @@
     <string name="block_step_1">1. फोन दूर रख दें</string>
     <string name="block_step_2">2. थोड़ा पानी पिएँ</string>
     <string name="block_step_3">3. थोड़ी देर टहलें</string>
+    <string name="block_privacy_note">फोकस लाइफ केवल यही देखता है कि कौन सा ऐप सामने है। यह आपके संदेश, फोटो या ऐप के अंदर की कोई चीज़ कभी नहीं पढ़ता।</string>
+    <string name="control_tap_next_reason">दूसरा कारण पढ़ने के लिए टैप करें</string>
     <string name="block_step_4">4. अपने वर्तमान कार्य पर लौटें</string>
     <string name="block_strict_notice">यह ऐप सख्त मोड में है। कोई छूट उपलब्ध नहीं है।</string>
 
@@ -202,6 +205,7 @@
     <string name="emergency_hold_to_unlock">अनलॉक करने के लिए 5 सेकंड तक दबाकर रखें</string>
     <string name="emergency_unlocked">%1$d मिनट के लिए अनलॉक</string>
     <string name="emergency_unlock_minutes">अनलॉक अवधि</string>
+    <string name="emergency_back_to_task">अपने काम पर वापस जाएँ</string>
     <string name="emergency_cancelled">अनलॉक रद्द। अच्छा निर्णय।</string>
     <string name="emergency_used_today">आज उपयोग किए गए आपातकालीन अनलॉक: %1$d</string>
     <string name="emergency_cooldown">बहुत जल्दी। आपातकालीन अनलॉक %1$s में फिर उपलब्ध होगा।</string>
@@ -250,6 +254,11 @@
     <string name="focus_summary_break_word">विश्राम</string>
     <string name="focus_summary_no_break">कोई विश्राम नहीं</string>
 
+    <string name="priority_label">प्राथमिकता</string>
+    <string name="priority_low">कम</string>
+    <string name="priority_normal">सामान्य</string>
+    <string name="priority_high">उच्च</string>
+
     <!-- ==================== Study planner ==================== -->
     <string name="title_study">अध्ययन योजना</string>
     <string name="study_exams">परीक्षा</string>
@@ -263,12 +272,19 @@
     <string name="study_completed_of">%2$d में से %1$d प्रकरण पूर्ण</string>
     <string name="study_timer">अध्ययन टाइमर</string>
     <string name="study_timer_start">समय गिनना शुरू करें</string>
+    <string name="study_timer_stop">टाइमर रोकें</string>
     <string name="study_timer_running">%1$s · %2$s चल रहा है</string>
     <string name="study_revision_due">रिवीज़न बाकी</string>
     <string name="study_revision_due_count">रिवीज़न के लिए %1$d प्रकरण बाकी</string>
     <string name="study_revision_due_count_plural">रिवीज़न के लिए %1$d प्रकरण बाकी</string>
     <string name="study_revision_none">कोई रिवीज़न बाकी नहीं। आपकी योजना सही चल रही है।</string>
-    <string name="study_revision_done">रिवीज़न दर्ज। अगला निर्धारित हो गया।</string>
+    <string name="study_revision_done">%1$s की रिवीज़न दर्ज हुई। अगली %2$d दिन में।</string>
+    <string name="label_all">सभी</string>
+    <string name="study_timer_elapsed">%1$s · %2$s</string>
+    <string name="study_timer_too_short">एक मिनट से कम — दर्ज नहीं किया गया। तैयार हों तो फिर शुरू करें।</string>
+    <string name="study_logged_minutes">%1$d मिनट पढ़ाई दर्ज हुई</string>
+    <string name="study_invalid_minutes">1 से 1440 मिनट दर्ज करें</string>
+    <string name="study_log_manual_hint">फोन से दूर की गई पढ़ाई के लिए। यह टाइमर वाले समय के बराबर ही गिनी जाती है।</string>
     <string name="study_progress_report">दैनिक प्रगति रिपोर्ट</string>
     <string name="study_weekly_stats">साप्ताहिक अध्ययन आँकड़े</string>
     <string name="study_minutes_today">आज %1$s पढ़ा</string>

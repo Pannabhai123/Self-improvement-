@@ -56,6 +56,14 @@ public final class Prefs {
     private static final String K_LAST_REPORT_DAY = "last_report_day";
     private static final String K_LAST_LIMIT_WARN_DAY = "limit_warn_day";
 
+    // ---- Running study timer ----
+    // Stored as an epoch deadline rather than an elapsed count so a throttled or
+    // killed process cannot drift, and so the timer survives a reboot honestly.
+    private static final String K_STUDY_TIMER_SINCE = "study_timer_since";
+    private static final String K_STUDY_TIMER_SUBJECT = "study_timer_subject";
+    private static final String K_STUDY_TIMER_EXAM = "study_timer_exam";
+    private static final String K_STUDY_TIMER_TOPIC = "study_timer_topic_id";
+
     // ---- Emergency unlock ----
     private static final String K_UNLOCK_UNTIL = "unlock_until";
     private static final String K_UNLOCK_PACKAGE = "unlock_package";
@@ -196,6 +204,62 @@ public final class Prefs {
 
     public static void setBlockCooldownSeconds(@NonNull Context c, int seconds) {
         prefs(c).edit().putInt(K_COOLDOWN_SEC, clamp(seconds, 0, 120)).apply();
+    }
+
+    // ------------------------------------------------------------------
+    //  Running study timer
+    // ------------------------------------------------------------------
+
+    /**
+     * Epoch millis at which the study timer started, or 0 when it is not running.
+     *
+     * <p>Lives in the excluded state file: a "timer running" flag restored onto a
+     * new device would credit study minutes that were never studied.</p>
+     */
+    public static long studyTimerStartedAt(@NonNull Context c) {
+        return state(c).getLong(K_STUDY_TIMER_SINCE, 0L);
+    }
+
+    public static void setStudyTimerStartedAt(@NonNull Context c, long millis) {
+        state(c).edit().putLong(K_STUDY_TIMER_SINCE, millis).apply();
+    }
+
+    @NonNull
+    public static String studyTimerSubject(@NonNull Context c) {
+        return state(c).getString(K_STUDY_TIMER_SUBJECT, "");
+    }
+
+    @NonNull
+    public static String studyTimerExam(@NonNull Context c) {
+        return state(c).getString(K_STUDY_TIMER_EXAM, "");
+    }
+
+    public static long studyTimerTopicId(@NonNull Context c) {
+        return state(c).getLong(K_STUDY_TIMER_TOPIC, 0L);
+    }
+
+    /** Writes or clears the whole timer record in one atomic edit. */
+    public static void setStudyTimer(@NonNull Context c, long startedAt, @NonNull String subject,
+                                     @NonNull String exam, long topicId) {
+        state(c).edit()
+                .putLong(K_STUDY_TIMER_SINCE, startedAt)
+                .putString(K_STUDY_TIMER_SUBJECT, subject)
+                .putString(K_STUDY_TIMER_EXAM, exam)
+                .putLong(K_STUDY_TIMER_TOPIC, topicId)
+                .apply();
+    }
+
+    public static void clearStudyTimer(@NonNull Context c) {
+        state(c).edit()
+                .remove(K_STUDY_TIMER_SINCE)
+                .remove(K_STUDY_TIMER_SUBJECT)
+                .remove(K_STUDY_TIMER_EXAM)
+                .remove(K_STUDY_TIMER_TOPIC)
+                .apply();
+    }
+
+    public static boolean isStudyTimerRunning(@NonNull Context c) {
+        return studyTimerStartedAt(c) > 0L;
     }
 
     // ------------------------------------------------------------------

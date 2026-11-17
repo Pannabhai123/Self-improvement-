@@ -31,6 +31,7 @@
     <!-- ==================== Type ==================== -->
     <!-- Display: the big score number and the focus timer -->
     <dimen name="text_display">56sp</dimen>
+    <dimen name="text_display_small">40sp</dimen>
     <dimen name="text_timer">64sp</dimen>
     <dimen name="text_headline">28sp</dimen>
     <dimen name="text_title">21sp</dimen>
