@@ -26,13 +26,14 @@ echo "::endgroup::"
 tail -n 80 "$LOG"
 
 if [ "$rc" -ne 0 ]; then
-  # Compiler and resource errors first, because they are the only lines that say
-  # what to fix. Gradle's own stack trace is deliberately excluded: it is long,
-  # it names no source file, and it would otherwise consume the whole annotation
-  # budget before any javac error was shown.
+  # Only lines that name something to fix. Warnings are deliberately excluded:
+  # Room prints a benign "multiple good constructors" note for every entity, and
+  # twenty of those pushed the real failure out of the annotation entirely.
+  # Gradle's own stack trace is excluded for the same reason - it is long, names
+  # no source file, and would consume the budget before any javac error appeared.
   errors="$(grep -E \
-    'error:|warning:|\.java:[0-9]+|\.xml:[0-9]+|\.kt:[0-9]+|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|tests? (completed|failed)|AAPT:' \
-    "$LOG" | grep -vE '^[[:space:]]*at |^[[:space:]]*\.* [0-9]+ tests? completed' | head -n 200)"
+    'error:|\.java:[0-9]+: error|\.xml:[0-9]+: error|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|There were failing tests|AssertionError|ComparisonFailure|expected:|AAPT:' \
+    "$LOG" | grep -vE '^[[:space:]]*at |warning:' | head -n 200)"
 
   # Then the short Gradle summary, which names the failing task and its cause.
   summary="$(grep -E 'What went wrong:|Execution failed for task|A problem occurred' \

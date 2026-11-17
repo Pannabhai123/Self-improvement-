@@ -85,6 +85,22 @@ android {
     }
 }
 
+// Gradle's default test task prints nothing about individual failures beyond
+// "there were failing tests, see the report", and the HTML report is not readable
+// from a CI annotation. Naming the failing test and its assertion on the console
+// is the difference between a diagnosable run and a blind one.
+tasks.withType(Test).configureEach {
+    testLogging {
+        events "failed", "skipped"
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces false
+    }
+    // Four workers would be the default on a 2-core runner; one JVM is enough for
+    // a few hundred pure-JVM assertions and keeps the log interleaving readable.
+    maxParallelForks 1
+}
+
 dependencies {
     // ---------- Core UI ----------
     implementation 'androidx.appcompat:appcompat:1.7.0'
