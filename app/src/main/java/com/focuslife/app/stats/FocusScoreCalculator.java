@@ -323,14 +323,40 @@ public final class FocusScoreCalculator {
         }
         score = clamp(score, 0, 100);
 
+        // A component that was never applicable must report zero available
+        // points. Its earned points are 0 because it was skipped, not because the
+        // user failed it, so leaving `weight - points` here made pickTop recommend
+        // things the user has not configured at all - most visibly "complete your
+        // habits" on an install with no habits, or a fitness target of 0 metres.
+        boolean studyApplicable = d.studyTargetMinutes > 0;
+        boolean focusApplicable = d.focusSessionTarget > 0;
+        boolean habitsApplicable = d.habitsTotal > 0;
+        boolean tasksApplicable = d.tasksTotal > 0;
+        boolean screenApplicable = d.screenLimitMinutes > 0 && !d.screenTimeUnknown;
+        boolean distractionApplicable = d.urgesTotal > 0;
+
         Improvement top = pickTop(
-                new Improvement(KEY_STUDY, W_STUDY - studyPoints, studyRemaining, UNIT_MINUTES),
-                new Improvement(KEY_FOCUS, W_FOCUS_SESSIONS - focusPoints, focusRemaining, UNIT_SESSIONS),
-                new Improvement(KEY_HABITS, W_HABITS - habitPoints, habitRemaining, UNIT_HABITS),
-                new Improvement(KEY_TASKS, W_TASKS - taskPoints, taskRemaining, UNIT_TASKS),
-                new Improvement(KEY_FITNESS, W_FITNESS - fitnessPoints, fitnessRemaining, UNIT_METRES),
-                new Improvement(KEY_SCREEN, W_SCREEN_TIME - screenPoints, screenRemaining, UNIT_MINUTES),
-                new Improvement(KEY_DISTRACTION, W_DISTRACTION - distractionPoints, distractionRemaining, UNIT_URGES)
+                new Improvement(KEY_STUDY,
+                        studyApplicable ? W_STUDY - studyPoints : 0,
+                        studyRemaining, UNIT_MINUTES),
+                new Improvement(KEY_FOCUS,
+                        focusApplicable ? W_FOCUS_SESSIONS - focusPoints : 0,
+                        focusRemaining, UNIT_SESSIONS),
+                new Improvement(KEY_HABITS,
+                        habitsApplicable ? W_HABITS - habitPoints : 0,
+                        habitRemaining, UNIT_HABITS),
+                new Improvement(KEY_TASKS,
+                        tasksApplicable ? W_TASKS - taskPoints : 0,
+                        taskRemaining, UNIT_TASKS),
+                new Improvement(KEY_FITNESS,
+                        fitnessApplicable ? W_FITNESS - fitnessPoints : 0,
+                        fitnessRemaining, UNIT_METRES),
+                new Improvement(KEY_SCREEN,
+                        screenApplicable ? W_SCREEN_TIME - screenPoints : 0,
+                        screenRemaining, UNIT_MINUTES),
+                new Improvement(KEY_DISTRACTION,
+                        distractionApplicable ? W_DISTRACTION - distractionPoints : 0,
+                        distractionRemaining, UNIT_URGES)
         );
 
         return new Result(score, studyPoints, focusPoints, habitPoints, taskPoints,

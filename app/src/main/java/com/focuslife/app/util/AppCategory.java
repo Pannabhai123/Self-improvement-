@@ -51,22 +51,25 @@ public final class AppCategory {
             "com.reddit", "com.linkedin", "com.pinterest", "com.tumblr",
             "com.bumble", "com.match", "in.mohalla.sharechat", "com.hike",
             "com.jio.jiomeet", "com.google.android.apps.messaging",
-            "com.microsoft.emmx.dualscreen", "com.discord", "com.skype",
+            "com.discord", "com.skype",
             "com.viber", "com.linecorp", "com.kakao.talk", "com.tencent.mm",
     };
 
     private static final String[] VIDEO_FRAGMENTS = {
             "com.google.android.youtube", "youtube.tv", "com.netflix",
-            "com.amazon.avod", "in.amazon.mshop", "com.hotstar", "com.disney",
+            "com.amazon.avod", "com.hotstar", "com.disney",
             "com.jio.media", "com.jiocinema", "com.sonyliv", "com.zee5",
             "com.mxtech", "com.vimeo", "com.dailymotion", "com.twitch",
-            "org.videolan.vlc", "com.hungama", "com.spotify.music",
-            "com.gaana", "com.jiosaavn", "com.wynk.music",
+            "org.videolan.vlc", "com.hungama",
     };
 
+    // Deliberately absent: browsers, shopping apps and pure audio services. They
+    // are not distractions this app claims to categorise, and guessing would put
+    // a wrong label in front of the user. Unlisted packages fall through to OTHER,
+    // which is excluded from every category claim and every suggestion.
     private static final String[] GAME_FRAGMENTS = {
             "com.dts.freefireth", "com.garena.game", "freefire", "com.pubg",
-            "com.tencent.ig", "com.ig.android", "com.kiloo.subwaysurf",
+            "com.tencent.ig", "com.kiloo.subwaysurf",
             "com.supercell", "clashofclans", "clashroyale", "com.mojang.minecraftpe",
             "com.roblox", "com.ea.gp", "com.zynga", "com.king.", "candyrush",
             "com.miniclip", "8ballpool", "com.activision", "com.ril.rgames",

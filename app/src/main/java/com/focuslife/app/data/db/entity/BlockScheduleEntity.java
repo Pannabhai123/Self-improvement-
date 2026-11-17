@@ -61,17 +61,26 @@ public class BlockScheduleEntity {
     public boolean isOpenAt(int dayOfWeek, int minuteOfDay) {
         if (!enabled) return false;
         int bit = 1 << (dayOfWeek - 1); // Calendar.SUNDAY == 1
-        if ((daysMask & bit) == 0) return false;
 
         if (startMinute <= endMinute) {
+            // A window that starts and ends on the same calendar day: only the
+            // selected day matters.
+            if ((daysMask & bit) == 0) return false;
             return minuteOfDay >= startMinute && minuteOfDay < endMinute;
         }
-        // Window crosses midnight: open late today, or early this morning
-        // (which belongs to yesterday's schedule).
-        boolean openLateToday = minuteOfDay >= startMinute;
-        boolean openEarlyFromYesterday = minuteOfDay < endMinute;
-        if (openLateToday) return true;
-        if (openEarlyFromYesterday) {
+
+        // The window crosses midnight, so there are two independent ways to be
+        // open, and each is governed by a different day of the week:
+        //   - late this evening, which belongs to today
+        //   - early this morning, which is the tail of yesterday's window
+        // Testing today's bit first and returning early used to make the second
+        // case unreachable whenever today was not itself selected, so a
+        // Saturday-night-only window silently stopped blocking at midnight
+        // instead of running to its configured 04:30 end.
+        if (minuteOfDay >= startMinute) {
+            return (daysMask & bit) != 0;
+        }
+        if (minuteOfDay < endMinute) {
             int yesterdayBit = 1 << (((dayOfWeek - 1) + 6) % 7);
             return (daysMask & yesterdayBit) != 0;
         }

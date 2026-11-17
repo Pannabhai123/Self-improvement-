@@ -57,7 +57,7 @@ public final class MilestoneTracker {
     private static final int SECONDS_7_MIN = 7 * 60;
 
     /**
-     * Evaluates every milestone.
+     * Evaluates every milestone, resolving the screen-time limit from preferences.
      *
      * @param lifetime       aggregate totals across all history
      * @param summaries      recent per-day rows, newest first, used for the
@@ -68,6 +68,21 @@ public final class MilestoneTracker {
     public static List<Milestone> evaluate(@NonNull Repository.LifetimeStats lifetime,
                                            @NonNull List<DailySummaryEntity> summaries,
                                            int best1600Sec) {
+        return evaluate(lifetime, summaries, best1600Sec, screenLimitFor());
+    }
+
+    /**
+     * Evaluates every milestone against an explicit screen-time limit.
+     *
+     * <p>Separate from the three-argument form so the screen-limit milestone can be
+     * tested without a {@code Context}: the injected limit keeps this path free of
+     * any Android dependency.</p>
+     */
+    @NonNull
+    public static List<Milestone> evaluate(@NonNull Repository.LifetimeStats lifetime,
+                                           @NonNull List<DailySummaryEntity> summaries,
+                                           int best1600Sec,
+                                           int screenLimitMinutes) {
         List<Milestone> out = new ArrayList<>(18);
 
         // Focus sessions.
@@ -93,7 +108,8 @@ public final class MilestoneTracker {
         out.add(new Milestone(R.string.milestone_all_habits,
                 anyDayWithEveryHabit(summaries)));
         out.add(new Milestone(R.string.milestone_screen_under_limit,
-                consecutiveDaysUnderScreenLimit(summaries) >= SCREEN_DAYS_REQUIRED));
+                consecutiveDaysUnderScreenLimit(summaries, screenLimitMinutes)
+                        >= SCREEN_DAYS_REQUIRED));
 
         // Running.
         out.add(new Milestone(R.string.milestone_1600_first, best1600Sec > 0));
@@ -170,7 +186,12 @@ public final class MilestoneTracker {
      * skipped rather than treated as failures: an unmeasured day is not a day the
      * user went over, and breaking the run on it would be a false negative.</p>
      */
-    private static int consecutiveDaysUnderScreenLimit(@NonNull List<DailySummaryEntity> summaries) {
+    private static int consecutiveDaysUnderScreenLimit(
+            @NonNull List<DailySummaryEntity> summaries, int screenLimitMinutes) {
+        if (screenLimitMinutes <= 0) {
+            // No limit configured, so there is nothing to stay under.
+            return 0;
+        }
         int longest = 0;
         int current = 0;
         for (DailySummaryEntity s : summaries) {
@@ -182,11 +203,7 @@ public final class MilestoneTracker {
                 // Unmeasured: leave the run intact but do not extend it.
                 continue;
             }
-            // The limit is not stored on the summary row, so the comparison uses
-            // the current target. That is deliberate: the milestone asks about
-            // the user's own limit, and comparing against a stale historical
-            // target would reward lowering it later.
-            if (s.screenMinutes <= screenLimitFor()) {
+            if (s.screenMinutes <= screenLimitMinutes) {
                 current++;
                 if (current > longest) longest = current;
             } else {
@@ -196,6 +213,14 @@ public final class MilestoneTracker {
         return longest;
     }
 
+    /**
+     * The screen-time limit to measure against.
+     *
+     * <p>The limit is not stored on the summary row, so the current target is used.
+     * That is deliberate: the milestone asks about the user's own limit, and
+     * comparing against a stale historical target would reward lowering it
+     * later.</p>
+     */
     private static int screenLimitFor() {
         Context context = com.focuslife.app.util.AppContext.get();
         if (context == null) return com.focuslife.app.data.prefs.Prefs.DEFAULT_TARGET_SCREEN_MIN;
