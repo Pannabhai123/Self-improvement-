@@ -206,6 +206,18 @@ public final class BlockDecisionEngine {
      * the dialer could be intercepted, an aggressive block list would be able to
      * prevent the user from turning blocking off.</p>
      */
+    /**
+     * Whether a package can never be blocked, whatever the user configures.
+     *
+     * <p>Public so the app picker can leave these out of its list. Keeping the
+     * check here rather than duplicating the package names in the UI means the
+     * safety invariant has exactly one definition: if the picker filtered on its
+     * own copy, the two could drift and Settings could become selectable.</p>
+     */
+    public static boolean isAlwaysAllowed(@NonNull String pkg) {
+        return defaultAllowList().contains(pkg);
+    }
+
     @NonNull
     private static java.util.Set<String> defaultAllowList() {
         java.util.Set<String> set = new java.util.HashSet<>();
