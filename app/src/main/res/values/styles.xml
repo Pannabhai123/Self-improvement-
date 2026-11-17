@@ -349,8 +349,6 @@
         <item name="android:activityCloseExitAnimation">@anim/fade_out_fast</item>
     </style>
 
-</resources>
-
     <!--
       Day-of-week toggle inside the routine editor.
 
@@ -370,3 +368,5 @@
         <item name="android:textSize">@dimen/text_label</item>
         <item name="cornerRadius">10dp</item>
     </style>
+
+</resources>

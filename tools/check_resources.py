@@ -169,6 +169,34 @@ for dirpath, _dirnames, filenames in os.walk(RES):
 xml_files.append(MANIFEST)
 xml_files.sort()
 
+# ----------------------------------------------------------------------
+#  2a. Every XML document is well-formed
+# ----------------------------------------------------------------------
+# Everything below scans XML with regular expressions, which cannot see a
+# structural error. This section parses each document for real, because
+# aapt2 rejects the build on markup the regexes happily ignore.
+#
+# The specific failure it exists for: a style appended after </resources> by a
+# shell heredoc, leaving markup outside the root element. That is invisible to
+# every other check here - the resource is still declared, still referenced
+# correctly, and still counted - but it fails mergeDebugResources outright.
+
+import xml.etree.ElementTree as ET
+
+malformed = []
+for path in xml_files:
+    try:
+        ET.parse(path)
+    except ET.ParseError as exc:
+        rel = os.path.relpath(path, ROOT)
+        malformed.append(f"{rel}:{exc.position[0]}: {exc.msg}")
+
+if malformed:
+    for item in malformed:
+        fail(f"XML is not well-formed -> {item}")
+else:
+    print(f"OK: all {len(xml_files)} XML documents parse as well-formed")
+
 # Resources that live in the Material / AppCompat / ConstraintLayout libraries
 # rather than in this project's res/. They are real at build time and must not be
 # reported as missing.

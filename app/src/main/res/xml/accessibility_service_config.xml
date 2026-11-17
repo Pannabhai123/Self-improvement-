@@ -2,11 +2,11 @@
 <!--
   Focus Life Distraction Guard configuration.
 
-  Deliberately minimal, for two reasons:
+  Deliberately minimal, for three reasons:
 
   1. PRIVACY. flagRetrieveInteractiveWindows, flagReportViewIds and
      canRetrieveWindowContent are all left OFF, and no content-change event type
-     is requested. The service therefore cannot read the content of any window —
+     is requested. The service therefore cannot read the content of any window -
      it only receives window-state events, which carry the foreground package
      name and nothing else.
 
@@ -14,21 +14,19 @@
      traversal, which is the expensive part of an accessibility service. On a
      Helio G85 this keeps the guard close to free.
 
-  packageNames is NOT set on purpose: an empty packageNames filter means
-  "all packages", which is required because the user's block list can change at
-  any time without re-registering the service. Filtering is done in code
-  against the local block list instead.
+     accessibilityEventTypes is exactly the two types the service implements, and
+     no others. It used to request typeWindowContentChanged - the chattiest event
+     Android has, firing on every text or subtree change anywhere on screen -
+     while the handler discarded all of them. Delivering events only to ignore
+     them is pure battery cost. Conversely typeWindowsChanged was handled in code
+     but never requested, so that branch could not run.
+
+  3. FLEXIBILITY. packageNames is NOT set on purpose: an empty packageNames
+     filter means "all packages", which is required because the user's block list
+     can change at any time without re-registering the service. Filtering is done
+     in code against the local block list instead.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    <!--
-      Exactly the two event types the service implements, and no others.
-
-      This used to request typeWindowContentChanged, which fires on every text or
-      subtree change anywhere on screen - by far the chattiest accessibility event
-      - while the handler discarded all of them. Delivering events only to ignore
-      them is pure battery cost on a Helio G85. Conversely typeWindowsChanged was
-      handled in code but never requested, so that branch could not run.
-    -->
     android:accessibilityEventTypes="typeWindowStateChanged|typeWindowsChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault"
