@@ -61,6 +61,10 @@ android {
 
     buildFeatures {
         viewBinding true
+        // AGP 8 stopped generating BuildConfig unless it is asked for, and the
+        // Profile tab shows BuildConfig.VERSION_NAME. Without this line the class
+        // does not exist and compilation fails.
+        buildConfig true
     }
 
     compileOptions {

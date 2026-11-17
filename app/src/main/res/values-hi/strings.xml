@@ -740,6 +740,15 @@
     <!-- ==================== Daily / weekly report ==================== -->
     <string name="title_daily_report">दैनिक रिपोर्ट</string>
     <string name="title_weekly_report">साप्ताहिक रिपोर्ट</string>
+    <string name="cd_previous_day">पिछला दिन</string>
+    <string name="cd_next_day">अगला दिन</string>
+    <string name="report_goals_sub">%2$d में से %1$d लक्ष्य पूरे</string>
+    <string name="report_score_by_day">दिन के अनुसार फोकस स्कोर</string>
+    <string name="report_habits_by_day">इस सप्ताह आदत पूरी करना</string>
+    <string name="report_study_by_day">दिन के अनुसार पढ़ाई के मिनट</string>
+    <string name="report_shared">रिपोर्ट साझा करने के लिए तैयार</string>
+    <string name="report_no_app_to_share">इस फोन पर साझा पाठ लेने वाला कोई ऐप नहीं है।</string>
+    <string name="report_running_sub">%2$s के लक्ष्य में से %1$s</string>
     <string name="report_summary">सारांश</string>
     <string name="report_total_study_time">कुल अध्ययन समय</string>
     <string name="report_total_mobile_usage">कुल मोबाइल उपयोग</string>
@@ -905,6 +914,7 @@
     <string name="profile_blocking_status">विकेंद्रण गार्ड: %1$s</string>
     <string name="profile_status_on">चालू</string>
     <string name="profile_status_off">बंद</string>
+    <string name="profile_target_range">%1$d से %2$d के बीच कोई पूरी संख्या दर्ज करें। यह लक्ष्य बंद करने के लिए 0 रखें।</string>
     <string name="profile_target_saved">लक्ष्य अद्यतन हुआ</string>
     <string name="profile_storage_used">स्थानीय डेटाबेस आकार</string>
 

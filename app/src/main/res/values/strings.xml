@@ -738,6 +738,15 @@
     <!-- ==================== Daily / weekly report ==================== -->
     <string name="title_daily_report">Daily Report</string>
     <string name="title_weekly_report">Weekly Report</string>
+    <string name="cd_previous_day">Previous day</string>
+    <string name="cd_next_day">Next day</string>
+    <string name="report_goals_sub">%1$d of %2$d goals reached</string>
+    <string name="report_score_by_day">Focus score by day</string>
+    <string name="report_habits_by_day">Habit completion this week</string>
+    <string name="report_study_by_day">Study minutes by day</string>
+    <string name="report_shared">Report ready to share</string>
+    <string name="report_no_app_to_share">No app on this phone can take the shared text.</string>
+    <string name="report_running_sub">%1$s of a %2$s target</string>
     <string name="report_summary">Summary</string>
     <string name="report_total_study_time">Total study time</string>
     <string name="report_total_mobile_usage">Total mobile usage</string>
@@ -903,6 +912,7 @@
     <string name="profile_blocking_status">Distraction Guard: %1$s</string>
     <string name="profile_status_on">on</string>
     <string name="profile_status_off">off</string>
+    <string name="profile_target_range">Enter a whole number from %1$d to %2$d. Use 0 to switch this target off.</string>
     <string name="profile_target_saved">Target updated</string>
     <string name="profile_storage_used">Local database size</string>
 

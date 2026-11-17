@@ -15,6 +15,9 @@ of the build that fails most often and is cheapest to check statically:
   5. English and Hindi string files are in parity, including `%n$x` placeholders.
   6. No CJK contamination in the Hindi file.
   7. Every component named in AndroidManifest.xml exists as a Java file.
+  8. Every custom view class used in a layout exists.
+  9. Every `com.focuslife.app.*` import resolves to a real source file, a
+     generated R/BuildConfig, or a ViewBinding with a matching layout.
 
 Exit code is non-zero when anything is missing, so it can gate a commit.
 """
@@ -646,6 +649,59 @@ for path in xml_files:
         java_path = os.path.join(JAVA, "com", "focuslife", "app", rel.replace(".", os.sep) + ".java")
         if not os.path.exists(java_path):
             fail(f"{os.path.basename(path)} uses <{cls}> but that class file is missing")
+
+# ----------------------------------------------------------------------
+#  9. Every project import resolves to a real source file
+# ----------------------------------------------------------------------
+#
+# The manifest check above only covers components; a screen can still import a
+# class that was never written, which is a hard compile error and the single
+# easiest mistake to make when files are authored in bulk. This section walks
+# every `com.focuslife.app.*` import and confirms the target exists.
+
+# Generated at build time, so they have no source file and must not be flagged.
+GENERATED_CLASSES = {"R", "BuildConfig"}
+
+import_re = re.compile(r'^\s*import\s+(static\s+)?(com\.focuslife\.app\.[A-Za-z0-9_.]+)\s*;',
+                       re.MULTILINE)
+
+unresolved_imports = []
+for path in java_files:
+    text = open(path, encoding="utf-8").read()
+    for m in import_re.finditer(text):
+        fqcn = m.group(2)
+        parts = fqcn.split(".")
+        # Strip the `com.focuslife.app.` prefix (three parts), then walk from the
+        # longest candidate down: `a.b.C.D` may be nested class D inside C.
+        rel = parts[3:]
+        if not rel:
+            continue
+        if len(rel) == 1 and rel[0] in GENERATED_CLASSES:
+            continue
+
+        # ViewBinding classes are generated from res/layout files.
+        if rel[0] == "databinding":
+            binding = rel[-1]
+            if not binding_class_to_layout(binding.replace("Binding", "")):
+                unresolved_imports.append(
+                    f"{os.path.basename(path)}: {fqcn} (no matching res/layout file)")
+            continue
+
+        resolved = False
+        for cut in range(len(rel), 0, -1):
+            candidate = os.path.join(JAVA, "com", "focuslife", "app",
+                                     *rel[:cut]) + ".java"
+            if os.path.exists(candidate):
+                resolved = True
+                break
+        if not resolved:
+            unresolved_imports.append(f"{os.path.basename(path)}: {fqcn}")
+
+if unresolved_imports:
+    for item in unresolved_imports:
+        fail(f"import does not resolve -> {item}")
+else:
+    print("OK: every com.focuslife.app.* import resolves to a source file")
 
 # ----------------------------------------------------------------------
 #  Report

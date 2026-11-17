@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Profile — the fifth bottom-nav tab.
+
+  Settings that change behaviour live here rather than in a hidden menu: daily
+  targets, language, clock format, permissions, export and the two destructive
+  resets. The destructive ones are visually separated from the rest and both
+  require an explicit confirmation, one of them typed.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/profile_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="@dimen/space_l"
+            android:paddingEnd="@dimen/screen_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_profile"
+                android:textAppearance="@style/TextAppearance.FocusLife.Headline" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/profile_offline"
+                android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+            <!-- ============ Progress at a glance ============ -->
+            <TextView
+                style="@style/CardTitle"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/profile_summary" />
+
+            <LinearLayout
+                android:id="@+id/summary_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:orientation="vertical" />
+
+            <!-- ============ Permissions ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/selectable_row"
+                android:id="@+id/card_permissions">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_shield"
+                        app:tint="@color/accent_500" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_m"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/profile_permissions"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body" />
+
+                        <TextView
+                            android:id="@+id/tv_permission_status"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                            tools:text="3 of 4 granted" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/text_tertiary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_blocking_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                tools:text="Distraction Guard: on" />
+
+            <!-- ============ Daily targets ============ -->
+            <TextView
+                style="@style/CardTitle"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/profile_targets" />
+
+            <LinearLayout
+                android:id="@+id/target_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:orientation="vertical" />
+
+            <!-- ============ Language and clock ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/profile_language" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:lineSpacingExtra="3dp"
+                        android:text="@string/profile_language_note"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+                    <RadioGroup
+                        android:id="@+id/group_language"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:orientation="vertical">
+
+                        <RadioButton
+                            android:id="@+id/radio_lang_system"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/touch_target"
+                            android:text="@string/profile_language_system"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/radio_lang_en"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/touch_target"
+                            android:text="@string/profile_language_en"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                            android:textColor="@color/text_primary" />
+
+                        <RadioButton
+                            android:id="@+id/radio_lang_hi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="@dimen/touch_target"
+                            android:text="@string/profile_language_hi"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                            android:textColor="@color/text_primary" />
+                    </RadioGroup>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switch_clock_24"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:minHeight="@dimen/touch_target"
+                        android:text="@string/profile_clock_format"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                        android:textColor="@color/text_primary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Data ============ -->
+            <TextView
+                style="@style/CardTitle"
+                android:layout_marginTop="@dimen/space_l"
+                android:text="@string/profile_data" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/selectable_row"
+                android:id="@+id/card_export">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_export"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Body" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/profile_export_desc"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_storage_used"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                tools:text="Local database size: 1.4 MB" />
+
+            <!-- ============ Destructive ============ -->
+            <!--
+              Kept visually apart from the settings above and last in the scroll,
+              so neither reset is reachable by an accidental tap while browsing.
+            -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:id="@+id/card_reset_day"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/selectable_row">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_reset_day"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                        android:textColor="@color/warning_500" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/profile_reset_day_desc"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:id="@+id/card_erase_all"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="@drawable/selectable_row">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_reset_all"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                        android:textColor="@color/danger_500" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/profile_reset_all_desc"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ About ============ -->
+            <TextView
+                style="@style/CardTitle"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/profile_about" />
+
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+                tools:text="Version 1.0.0" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_view_report"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/title_daily_report"
+                app:icon="@drawable/ic_assessment"
+                app:iconGravity="textStart" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

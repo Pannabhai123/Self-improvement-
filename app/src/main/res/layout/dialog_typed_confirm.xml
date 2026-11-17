@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A confirmation that requires typing a word rather than a single tap. Used only
+  by "erase all data", where an accidental confirmation destroys months of
+  history that exists nowhere else.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/space_xxl"
+    android:paddingTop="@dimen/space_l"
+    android:paddingEnd="@dimen/space_xxl"
+    android:paddingBottom="@dimen/space_s">
+
+    <TextView
+        android:id="@+id/tv_confirm_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="4dp"
+        android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+        tools:text="This permanently deletes every habit, streak, session and report on this phone. Type RESET to confirm." />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/field_confirm"
+        style="@style/Widget.FocusLife.TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_m">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapCharacters"
+            android:maxLength="12"
+            android:textColor="@color/text_primary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>
