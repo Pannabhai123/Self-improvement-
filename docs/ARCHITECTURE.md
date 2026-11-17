@@ -368,7 +368,10 @@ binary mirror firewalled**, so `aapt2` and `javac` could not run at all.
 `tools/check_resources.py` reproduces the cheapest, highest-yield part of the
 build:
 
-- every `R.<type>.<name>` in Java and `@<type>/<name>` in XML resolves
+- every XML document parses as well-formed
+- every `R.<type>.<name>` in Java and `@<type>/<name>` in XML resolves, with style
+  references matched exactly and `parent=` / implicit dotted parents resolved
+- every Java source, tests included, has balanced delimiters
 - every custom `prv_*` / `bcv_*` / `wsv_*` attribute is declared in `attrs.xml`
 - every `binding.<field>` matches an `android:id` in the correct layout, resolved
   **per declared variable** and following nested `<include>`s
@@ -378,12 +381,18 @@ build:
 - every manifest component, custom view class and `com.focuslife.app.*` import has
   a source file
 
-It verifies 1,844 declared resource names, 680 `R.*` references, 431 `@type/name`
-references and 872 strings per locale, and exits non-zero so it can gate a commit.
+It verifies 1,830 declared resource names, 145 XML documents, 680 `R.*` references,
+431 `@type/name` references, 89 Java sources and 872 strings per locale, and exits
+non-zero so it can gate a commit.
 
 **What it cannot check:** Java method existence and arity. That gap is covered by
 the 159 unit tests and by CI compilation — and it is why every API a new screen
 depends on is read from source before it is called, rather than assumed.
+
+The gap is not theoretical. Three of the checks above were added *after* CI found
+what they missed: malformed XML, a style reference that resolved against a bare
+`Widget` prefix because the auditor seeded its pool with dotted prefixes, and an
+unbalanced parenthesis. `docs/TESTING.md` records the full sequence.
 
 The tool has its own hard-won fixes recorded in its comments: excluding
 `android.R.attr.*`, harvesting `@+id/` declarations from XML, a `camel_to_snake`

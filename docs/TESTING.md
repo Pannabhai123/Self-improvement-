@@ -9,12 +9,19 @@
 - **C — Requires a physical phone.** Not yet verified. Behaviour is implemented and
   reasoned about, but has not been observed running on a device.
 
-Category C is stated plainly rather than optimistically. **Nothing in this project
-has been run on an Android device or an emulator**: the development environment had
-no JDK, no Android SDK and no network access to any binary mirror, so the only
-compilation that will ever happen is inside GitHub Actions. Claiming otherwise
-would violate the brief's own rule about never presenting an untested feature as
-working.
+Category C is stated plainly rather than optimistically.
+
+**Current status:** CI is green. All 159 unit tests pass, the debug APK assembles,
+and it is published as an artifact (5.4 MB). See "The build log" below for what it
+took to get there and what that process proved.
+
+**What has still never happened:** this app has not been run on an Android device
+or an emulator. The development environment had no JDK, no Android SDK and no
+network access to any binary mirror, so the only compilation that has ever occurred
+is inside GitHub Actions — which executes tests but cannot exercise a UI, an
+accessibility service or a notification. Everything in category C below is
+implemented and reasoned about, not observed. Claiming otherwise would violate the
+brief's own rule about never presenting an untested feature as working.
 
 ---
 
@@ -165,9 +172,11 @@ a fully achieved history reaching all eighteen.
 
 | Check | Count |
 |---|---|
-| Declared resource names across 13 types | 1,844 |
+| Declared resource names across 13 types | 1,830 |
 | `R.<type>.<name>` references resolving | 680 |
+| XML documents parsing as well-formed | 145 |
 | `@<type>/<name>` references resolving | 431 |
+| Own-namespace style parents resolving | all |
 | Strings, en/hi, in exact parity | 872 each |
 | Positional placeholders matching across locales | all |
 | `getString`/`setText` format arguments matching | all |
@@ -175,7 +184,13 @@ a fully achieved history reaching all eighteen.
 | `com.focuslife.app.*` imports resolving | all |
 | Custom `prv_*`/`bcv_*`/`wsv_*` attributes declared | all |
 | ViewBinding fields matching a layout `android:id` | all |
+| Java sources with balanced delimiters | 89 |
 | CJK contamination in the Hindi file | none |
+
+Three of these were added *because* CI found what they missed: XML well-formedness
+(run 3), exact style resolution plus parent resolution (run 4), and delimiter
+balance (run 5). Test sources are now scanned by every Java section too — they were
+previously not scanned at all, even though CI compiles them in the same pass.
 
 The auditor's format-argument check has been self-tested against three injected
 bugs and its import check against an injected fake class, a fake ViewBinding and a
@@ -190,20 +205,98 @@ whose layout id was `btn_slot_delete`, and a `MaterialSwitch` text attribute.
 
 ---
 
+## The build log
+
+The project was written without a compiler, so the first real build was also the
+first real verification. It took **seven runs** to go green, and the sequence is
+worth recording because it shows exactly what static analysis could not see.
+
+| Run | Failed at | Cause |
+|---|---|---|
+| 1 | Set up Android SDK | A third-party action re-downloaded an SDK the runner already had, and was a single point of failure that aborted before compilation |
+| 2 | Generate Gradle wrapper | `gradle wrapper` in the project root evaluates the Android build script, so it tried to resolve AGP before the wrapper existed |
+| 3 | mergeDebugResources | A style appended *after* `</resources>` made `styles.xml` malformed |
+| 4 | processDebugResources | `Widget.FocusLife.TextInput.ExposedDropdown` was referenced by four sites and declared nowhere |
+| 5 | compileDebugJavaWithJavac | An unbalanced parenthesis, plus a batch of type errors |
+| 6 | compileDebugJavaWithJavac | Three errors hidden behind Room's warnings in the log |
+| 7 | testDebugUnitTest | **158 of 159 tests passed**; one real logic bug |
+
+Run 8 is green: 159 tests pass and the APK assembles.
+
+### What the resource merger caught (runs 3–4)
+
+Both were invisible to every check the auditor performed. A style declared after
+`</resources>` is still declared, still referenced correctly and still counted —
+only a real XML parse sees it. And the missing dropdown style survived because the
+auditor's own resolution logic was broken: it seeded the declared-style pool with
+every dotted *prefix* of every declared style, so `Widget` alone was in the pool
+and **every** reference to any `Widget.*` or `Theme.*` style resolved against it.
+The style check had been passing unconditionally. Both holes are now closed, and
+the auditor parses all 145 XML documents.
+
+### What javac caught (runs 5–6)
+
+Twenty-two errors across thirteen files. The classes:
+
+- **An unbalanced parenthesis** in `AppLimitActivity`, calling a two-parameter
+  helper with one argument inside it.
+- **Two imports of the same simple name** — `android.content.res.Configuration` and
+  `androidx.work.Configuration` — making every bare use ambiguous. Removing one
+  import then silently retyped three more uses in a nested class.
+- **Four missing imports**: `androidx.room.Transaction`, `SnoozeWorker` from a
+  different package, `NotifHelper`, and `ViewGroup`.
+- **Two duplicated `@NonNull` annotations**, the first copy stranded above a
+  javadoc comment.
+- **A call to `View.setAccessibilityClassName`**, which does not exist; custom
+  views override the getter, which `View` declares `public` so the override cannot
+  narrow it to `protected`.
+- **`Settings.ACTION_ACCESSIBILITY_DETAILS_SETTINGS`**, which is `@SystemApi` and
+  `@hide` — absent from the public SDK at any `compileSdk`. Now a literal, still
+  guarded by a resolvability check with two fallbacks.
+- **A variable that never existed** (`minutes[0]`), leaving a dialog blank.
+- **A method called with the wrong arity** (`showReasonEditor()` for
+  `showReasonEditor(ReasonEntity)`).
+- **A ternary mixing an `int` resource id with a `String`** in a `setText`.
+- **A constant referenced from another class that was never declared**
+  (`ReportActivity.EXTRA_DAY_KEY`), which also meant a notification could not open
+  the day it was reporting on.
+- **Seven places where a `Fragment` passed `this`** where a `Context` is required.
+
+### What the tests caught (run 7)
+
+One failure, and the most interesting bug in the whole list because nothing static
+could ever have found it:
+
+```
+FocusScoreCalculatorTest > nullDayIsHandled FAILED
+java.lang.AssertionError: expected:<0> but was:<14>
+```
+
+`compute(null)` substituted `new Day()` — but `Day` is not blank on construction.
+It carries the seeded defaults the dashboard needs (study target 360, four
+sessions, 1600 m, screen limit 180), so a day that never happened was scored as
+one where every target was configured and nothing was done. All 14 points came
+from screen time: zero minutes against a 180-minute limit read as a *measured,
+perfect* day. That is precisely the mistake the `screenTimeUnknown` flag exists to
+prevent, arriving from the other direction. A null Day now zeroes every target, so
+nothing is applicable and the score is 0.
+
+### What this proves, and what it does not
+
+Proves: the project compiles, the resources link, Room's annotation processor
+accepts all 17 entities and 10 DAOs, ViewBinding generates for all 54 layouts, and
+159 behavioural assertions about scoring, blocking, scheduling, time arithmetic,
+categorisation and milestones hold.
+
+Does not prove: anything about running the app. No screen has been drawn, no
+service has started, no notification has appeared. That is category C.
+
 ## C. Requires a physical phone
 
 Implemented and reasoned about, **not observed running**. Each item below is what
 needs checking on the OPPO A18 and why it cannot be checked any other way.
 
-### C1. Compilation itself — highest priority
-
-CI compiles the project for the first time. Until a run goes green, nothing else in
-this report matters. Static analysis catches resource and import errors but not
-Java type errors, so a first-build failure is the most likely remaining problem.
-
-**Check:** Actions → Build APK → green tick.
-
-### C2. Accessibility blocking
+### C1. Accessibility blocking
 
 The single most consequential unverifiable behaviour. Android's accessibility
 delivery, ColorOS's per-app management and the timing of window-state events cannot
@@ -213,7 +306,7 @@ be simulated on a JVM.
 that app, and confirm the warning appears. Then verify the dialer still opens
 normally. Confirm no noticeable battery or scroll-jank cost from the guard.
 
-### C3. Usage access and `UsageStatsManager` on ColorOS
+### C2. Usage access and `UsageStatsManager` on ColorOS
 
 Whether ColorOS grants real per-package foreground minutes, and whether it exposes
 launch counts at all (`supportsLaunchCounts` may legitimately return false).
@@ -222,15 +315,15 @@ launch counts at all (`supportsLaunchCounts` may legitimately return false).
 *Refresh now*. Confirm the totals are plausible and that app-open counts either
 appear or report as unsupported rather than showing zero.
 
-### C4. Per-app daily limit enforcement
+### C3. Per-app daily limit enforcement
 
-Depends on C2 and C3 together: the limit is only enforceable once usage is
+Depends on C1 and C2 together: the limit is only enforceable once usage is
 measurable and the guard is live.
 
 **Check:** set a 1-minute limit on an app, use it past the limit, and confirm it
 blocks with `REASON_LIMIT` and that the block-attempt notification arrives.
 
-### C5. Foreground service survival
+### C4. Foreground service survival
 
 Whether `BlockForegroundService` survives ColorOS's task killer over hours, and
 whether `onTaskRemoved` re-arms it as intended.
@@ -238,7 +331,7 @@ whether `onTaskRemoved` re-arms it as intended.
 **Check:** start a mode, swipe the app from Recents, wait 30+ minutes, and confirm
 blocking still works and the status notification is present.
 
-### C6. Reminder punctuality
+### C5. Reminder punctuality
 
 The two-layer model is verified in code, but actual delivery timing depends on
 Doze, ColorOS background restrictions and whether the battery exemption was
@@ -248,7 +341,7 @@ granted.
 the screen off for 30 minutes. Repeat with the battery exemption granted and
 revoked, and note the difference.
 
-### C7. Exact-alarm availability
+### C6. Exact-alarm availability
 
 `SCHEDULE_EXACT_ALARM` is not declared, so Android 12+ is expected to take the
 inexact `setWindow` fallback. The OPPO A18 ships on Android 13.
@@ -256,7 +349,7 @@ inexact `setWindow` fallback. The OPPO A18 ships on Android 13.
 **Check:** confirm the onboarding screen reports reminders as approximate rather
 than claiming exact timing, and that reminders still arrive.
 
-### C8. Notification channels and lock-screen behaviour
+### C7. Notification channels and lock-screen behaviour
 
 Channel importance, the `VISIBILITY_SECRET` setting on `fl_modes`, vibration, and
 badge behaviour are all OEM-customised on ColorOS.
@@ -264,13 +357,13 @@ badge behaviour are all OEM-customised on ColorOS.
 **Check:** trigger one notification per channel and confirm importance, sound and
 lock-screen visibility match the intent.
 
-### C9. Boot re-arming
+### C8. Boot re-arming
 
 **Check:** reboot with a mode active and routine slots configured. Confirm
 `BootReceiver` re-registers all three periodic workers, restarts the guard and
 re-arms the next routine alarm.
 
-### C10. Language switching and Hindi rendering
+### C9. Language switching and Hindi rendering
 
 Parity is statically verified, but actual Devanagari layout — ascender clipping,
 line height, button widths, and the seven day-toggles fitting a 360 dp row — needs
@@ -279,7 +372,7 @@ to be seen.
 **Check:** switch to Hindi in Profile, walk every screen, and confirm the activity
 recreates with no mixed-language leftovers and no clipped text.
 
-### C11. Rendering and performance
+### C10. Rendering and performance
 
 Canvas charts, the 200 dp progress ring, RecyclerView scrolling, and cold-start
 time on 4 GB of RAM.
@@ -287,25 +380,25 @@ time on 4 GB of RAM.
 **Check:** open each screen with a populated database and watch for jank. Confirm
 cold start is acceptable and that memory stays reasonable after an hour of use.
 
-### C12. Data export
+### C11. Data export
 
 **Check:** Profile → Export my data, then confirm the file exists at the reported
 path and contains readable text.
 
-### C13. Both destructive resets
+### C12. Both destructive resets
 
 **Check:** *Reset today's data* must clear today and preserve history — this is the
 regression that a `deleteSummariesOlderThan("0000-00-00")` bug would have caused,
 and it was fixed in code but never observed. *Erase all data* must require typing
 `RESET` and then restore seeded defaults.
 
-### C14. Onboarding under denial
+### C13. Onboarding under denial
 
 **Check:** decline every permission and confirm the app remains fully usable, that
 no screen crashes, that screen time reads as *not measured*, and that each screen
 explains what is missing rather than failing silently.
 
-### C15. Room migration behaviour
+### C14. Room migration behaviour
 
 The schema is exported and `DatabaseSeeder` is idempotent, but an actual
 install-over-an-existing-version has not been exercised.
@@ -337,19 +430,33 @@ shipped.
 | An entity loop variable and a ViewBinding variable both named `row` | Ambiguous to read and to check | Static analysis flagged it |
 | A test asserting the opposite of what it demonstrated | False confidence in the null-day handling | Re-deriving expectations |
 | A test that failed one Sunday in seven | Flaky CI | Reviewing date dependencies |
+| `compute(null)` substituting a `Day` carrying seeded default targets | **A day that never happened scored 14/100**, all of it from zero screen time reading as measured and perfect | Unit test, first CI execution |
+| The auditor resolving every `Widget.*` / `Theme.*` style against the bare prefix | Style checking silently disabled; four layouts referenced an undeclared style | aapt2, run 4 |
+| `Settings.ACTION_ACCESSIBILITY_DETAILS_SETTINGS` (`@SystemApi`, not in the public SDK) | Compilation failure at any `compileSdk` | javac, run 5 |
+| Two imports of the same simple name `Configuration` | Every bare use ambiguous; the app could not compile | javac, run 5 |
+| A `Fragment` passing `this` as a `Context`, seven times | Compilation failure | javac, run 5 |
+| A style appended after `</resources>` | `mergeDebugResources` failure — malformed XML | aapt2, run 3 |
+| A comment placed inside an XML start tag | Malformed XML; the service config would not parse | Added XML parse check |
+| `tools/check_resources.py` reporting wrong line numbers | Comment stripping consumed newlines, so every reported line was wrong | Self-testing the scanner |
 
 ---
 
 ## What "working" means for this delivery
 
-**Delivered and verified:** the complete source tree, a CI pipeline that compiles
-it and runs 159 tests before producing an installable APK, a static auditor that
-gates every commit, and full documentation.
+**Delivered and verified:** the complete source tree; a green CI pipeline that runs
+159 tests and assembles an installable 5.4 MB APK on every push; a static auditor
+that parses every XML document and gates each commit; and full documentation.
 
-**Not yet verified:** every item in section C, above all C1 — that the project
-compiles. Until an Actions run is green, treat the APK as unproven and treat this
-report as a statement of what has been *checked* rather than what has been
-*observed working*.
+**Verified by execution:** the project compiles, resources link, Room accepts the
+schema, ViewBinding generates for every layout, and the behavioural guarantees
+listed in section A hold.
+
+**Not verified:** everything in section C. No screen has been drawn, no service has
+started, no notification has appeared on a phone. The accessibility guard — the
+feature with the most consequence for the user — cannot be validated without a
+device, and its failure modes (an OEM that does not deliver window events, a
+service the OS kills) are exactly the ones a JVM cannot reproduce.
 
 The honest summary: the logic that can be tested without a device has been tested
-hard, and the parts that cannot be are listed here rather than claimed.
+hard and now passes in CI, and the parts that cannot be are listed here with what
+to check rather than claimed as working.

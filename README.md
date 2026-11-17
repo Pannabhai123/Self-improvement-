@@ -20,10 +20,12 @@ signed debug APK on every push:
 4. Unzip it and install `FocusLife-debug.apk` on the phone.
 
 Full step-by-step instructions, including the OPPO-specific "install from unknown
-sources" prompts, are in **[docs/INSTALL.md](docs/INSTALL.md)**.
+sources" prompts, are in **[docs/INSTALL.md](docs/INSTALL.md)**. The APK is
+**5.4 MB**.
 
 The same workflow runs **159 JVM unit tests before** it assembles the APK, so a
 regression in scoring, blocking or scheduling fails the build instead of shipping.
+The pipeline is green: the tests pass and the APK builds.
 
 ---
 
@@ -126,7 +128,11 @@ environment with no JDK and no Android SDK, and every binary mirror was
 firewalled — so `aapt2` and `javac` could not run at all. It reproduces the part
 of the build that fails most often:
 
+- every XML document **parses** — a style appended after `</resources>` is still a
+  declared, correctly referenced resource, and only a real parse sees the problem
 - every `R.<type>.<name>` in Java and `@<type>/<name>` in XML resolves
+- every style reference resolves exactly, and every own-namespace `parent=` and
+  implicit dotted parent resolves
 - every custom view attribute is declared in `attrs.xml`
 - every `binding.<field>` matches an `android:id` in the right layout, including
   nested `<include>`s
@@ -135,14 +141,17 @@ of the build that fails most often:
 - **no format string is used where a static label is needed** — `setText` on a
   string containing `%1$d` would render the raw placeholder
 - every manifest component and every `com.focuslife.app.*` import has a source file
+- every Java source, **tests included**, has balanced delimiters
 
 ```bash
 python3 tools/check_resources.py    # exits non-zero on any problem
 ```
 
-It currently verifies 1,844 declared resource names, 680 `R.*` references, 431
-`@type/name` references and 872 strings per locale. It cannot check Java method
-existence or arity — that is what the unit tests and CI compilation are for.
+It currently verifies 1,830 declared resource names, 680 `R.*` references, 145 XML
+documents, 431 `@type/name` references, 89 Java sources and 872 strings per locale.
+It cannot check Java method existence or arity — that is what the unit tests and CI
+compilation are for, and [docs/TESTING.md](docs/TESTING.md) records what each of
+them caught.
 
 ---
 
