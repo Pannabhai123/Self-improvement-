@@ -102,10 +102,18 @@ public class FocusScoreCalculatorTest {
     }
 
     @Test
-    public void nullDayIsHandled() {
+    public void nullDayScoresZeroBecauseNothingIsApplicable() {
+        // A null Day means no data was measured. It must not be treated as a blank
+        // day carrying the seeded default targets, because those defaults make
+        // screen time look measured - and zero minutes then earns full marks for a
+        // day that never happened.
         Result r = FocusScoreCalculator.compute(null);
         assertNotNull(r);
         assertEquals(0, r.score);
+        assertEquals(0, r.applicableWeight);
+        assertEquals(0, r.screenPoints);
+        assertNull("no component was applicable, so there is nothing to improve",
+                r.topImprovement);
     }
 
     // ------------------------------------------------------------------

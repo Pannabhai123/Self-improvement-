@@ -208,7 +208,24 @@ public final class FocusScoreCalculator {
      * fair 0-100 score instead of being permanently capped at 88.</p>
      */
     public static Result compute(Day d) {
-        if (d == null) d = new Day();
+        if (d == null) {
+            // Absent data is not the same as a blank day carrying the seeded
+            // default targets. new Day() brings studyTargetMinutes 360,
+            // focusSessionTarget 4, runTargetM 1600, workoutTarget 3 and
+            // screenLimitMinutes 180, so substituting it scored a day that never
+            // happened at 14 - every point of it from screen time, where zero
+            // minutes read as a measured and perfect day. With nothing measured
+            // nothing is applicable, which is what a null Day means.
+            d = new Day();
+            d.studyTargetMinutes = 0;
+            d.focusSessionTarget = 0;
+            d.habitsTotal = 0;
+            d.tasksTotal = 0;
+            d.runTargetM = 0;
+            d.workoutTarget = 0;
+            d.screenLimitMinutes = 0;
+            d.urgesTotal = 0;
+        }
 
         int applicable = 0;
 
