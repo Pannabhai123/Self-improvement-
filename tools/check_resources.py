@@ -30,6 +30,7 @@ from collections import defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RES = os.path.join(ROOT, "app", "src", "main", "res")
 JAVA = os.path.join(ROOT, "app", "src", "main", "java")
+TEST_JAVA = os.path.join(ROOT, "app", "src", "test", "java")
 MANIFEST = os.path.join(ROOT, "app", "src", "main", "AndroidManifest.xml")
 
 problems = []
@@ -131,11 +132,15 @@ R_TO_TYPE = {
     "raw": "raw", "font": "font", "plurals": "plurals",
 }
 
+# Both source sets. Unit tests reference R.string, resolve project imports and
+# must balance their delimiters exactly like production code does, and CI compiles
+# them in the same pass - so they are scanned by every Java section below.
 java_files = []
-for dirpath, _dirnames, filenames in os.walk(JAVA):
-    for fname in filenames:
-        if fname.endswith(".java"):
-            java_files.append(os.path.join(dirpath, fname))
+for source_root in (JAVA, TEST_JAVA):
+    for dirpath, _dirnames, filenames in os.walk(source_root):
+        for fname in filenames:
+            if fname.endswith(".java"):
+                java_files.append(os.path.join(dirpath, fname))
 java_files.sort()
 
 r_refs = defaultdict(set)  # (type, name) -> files
@@ -783,6 +788,112 @@ if unresolved_imports:
         fail(f"import does not resolve -> {item}")
 else:
     print("OK: every com.focuslife.app.* import resolves to a source file")
+
+# ----------------------------------------------------------------------
+#  10. Java delimiter balance
+# ----------------------------------------------------------------------
+# A tokeniser, not a parser: it walks each Java source skipping line and block
+# comments, string and char literals with their escapes, and text blocks, then
+# checks that every ( [ { is closed by the matching symbol.
+#
+# This exists because an unbalanced delimiter is a build-stopping javac error
+# that no other check here can see - the resource names, imports and format
+# arguments in such a file are all perfectly fine. It reports the line where the
+# mismatch surfaces, which in practice is the line javac reports.
+#
+# It cannot catch missing semicolons, wrong arities or type errors. Those are
+# what CI compilation and the unit tests are for.
+
+DELIMITER_PAIRS = {")": "(", "]": "[", "}": "{"}
+
+
+def scan_java_balance(path):
+    """Return a list of (line, message) for delimiter problems in one file."""
+    src = open(path, encoding="utf-8").read()
+    problems = []
+    stack = []
+    i, n, line = 0, len(src), 1
+    while i < n:
+        c = src[i]
+        if c == "\n":
+            line += 1
+            i += 1
+            continue
+        if src.startswith('"""', i):
+            j = src.find('"""', i + 3)
+            if j == -1:
+                return [(line, "unterminated text block")]
+            line += src.count("\n", i, j + 3)
+            i = j + 3
+            continue
+        if c == "/" and i + 1 < n and src[i + 1] == "/":
+            j = src.find("\n", i)
+            i = n if j == -1 else j
+            continue
+        if c == "/" and i + 1 < n and src[i + 1] == "*":
+            j = src.find("*/", i + 2)
+            if j == -1:
+                return [(line, "unterminated block comment")]
+            line += src.count("\n", i, j + 2)
+            i = j + 2
+            continue
+        if c == '"':
+            j = i + 1
+            while j < n:
+                if src[j] == "\\":
+                    j += 2
+                    continue
+                if src[j] == '"':
+                    break
+                if src[j] == "\n":
+                    return [(line, "unterminated string literal")]
+                j += 1
+            if j >= n:
+                return [(line, "unterminated string literal")]
+            i = j + 1
+            continue
+        if c == "\'":
+            j = i + 1
+            while j < n:
+                if src[j] == "\\":
+                    j += 2
+                    continue
+                if src[j] == "\'":
+                    break
+                if src[j] == "\n":
+                    return [(line, "unterminated char literal")]
+                j += 1
+            if j >= n:
+                return [(line, "unterminated char literal")]
+            i = j + 1
+            continue
+        if c in "([{":
+            stack.append((c, line))
+        elif c in ")]}":
+            if not stack:
+                problems.append((line, f"unmatched closing \'{c}\'"))
+            else:
+                open_c, open_line = stack.pop()
+                if open_c != DELIMITER_PAIRS[c]:
+                    problems.append((
+                        line,
+                        f"\'{c}\' closes \'{open_c}\' opened on line {open_line}"))
+        i += 1
+    for open_c, open_line in stack:
+        problems.append((open_line, f"unclosed \'{open_c}\'"))
+    return problems
+
+
+unbalanced = []
+for path in java_files:
+    for ln, msg in scan_java_balance(path):
+        unbalanced.append(f"{os.path.relpath(path, ROOT)}:{ln}: {msg}")
+
+if unbalanced:
+    for item in unbalanced:
+        fail(f"Java delimiters unbalanced -> {item}")
+else:
+    print(f"OK: all {len(java_files)} Java sources have balanced delimiters")
 
 # ----------------------------------------------------------------------
 #  Report

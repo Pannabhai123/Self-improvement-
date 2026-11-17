@@ -212,8 +212,7 @@ public class AppLimitActivity extends AppCompatActivity {
                     ? ModeController.modeName(this, schedule.mode)
                     : schedule.label);
 
-            detail.setText(getString(R.string.blocker_schedule_from_to,
-                    formatMinute(schedule.startMinute), schedule.endMinute)));
+            detail.setText(formatScheduleRange(schedule.startMinute, schedule.endMinute));
 
             float alpha = schedule.enabled ? 1f : 0.5f;
             title.setAlpha(alpha);
@@ -231,13 +230,22 @@ public class AppLimitActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Renders a schedule window as "start – end", honouring the 12/24-hour
+     * preference and the localised separator string.
+     *
+     * <p>Named for what it produces rather than what it consumes: it formats a
+     * range, and {@code formatMinute} read like a single-time formatter next to
+     * {@code TimeUtils.formatMinutes}, which formats a duration.</p>
+     */
     @NonNull
-    private String formatMinute(int startMinute, int endMinute) {
-        String start = Prefs.use24HourClock(this)
+    private String formatScheduleRange(int startMinute, int endMinute) {
+        boolean use24 = Prefs.use24HourClock(this);
+        String start = use24
                 ? TimeUtils.formatClock24(startMinute) : TimeUtils.formatClock12(startMinute);
-        String end = Prefs.use24HourClock(this)
+        String end = use24
                 ? TimeUtils.formatClock24(endMinute) : TimeUtils.formatClock12(endMinute);
-        return start + " – " + end;
+        return getString(R.string.blocker_schedule_from_to, start, end);
     }
 
     // ------------------------------------------------------------------

@@ -26,13 +26,21 @@ echo "::endgroup::"
 tail -n 80 "$LOG"
 
 if [ "$rc" -ne 0 ]; then
-  # Prefer the lines that actually name a problem, in the order a
-  # developer would want them: javac errors with file:line, resource
-  # errors, the failing task, Gradle's "What went wrong", test
-  # failures, and root causes.
-  detail="$(grep -E \
-    'error:|\.java:[0-9]+|\.xml:[0-9]+|\.kt:[0-9]+|Execution failed|What went wrong:|> Task .*FAILED|FAILED$|Caused by:|A problem occurred|Could not resolve|Could not find|Unresolved reference|tests? (completed|failed)' \
-    "$LOG" | head -n 70)"
+  # Compiler and resource errors first, because they are the only lines that say
+  # what to fix. Gradle's own stack trace is deliberately excluded: it is long,
+  # it names no source file, and it would otherwise consume the whole annotation
+  # budget before any javac error was shown.
+  errors="$(grep -E \
+    'error:|warning:|\.java:[0-9]+|\.xml:[0-9]+|\.kt:[0-9]+|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|tests? (completed|failed)|AAPT:' \
+    "$LOG" | grep -vE '^[[:space:]]*at |^[[:space:]]*\.* [0-9]+ tests? completed' | head -n 60)"
+
+  # Then the short Gradle summary, which names the failing task and its cause.
+  summary="$(grep -E 'What went wrong:|Execution failed for task|A problem occurred' \
+    "$LOG" | head -n 8)"
+
+  detail="$errors"
+  [ -n "$summary" ] && detail="${errors:+$errors
+}$summary"
 
   if [ -z "$detail" ]; then
     detail="$(tail -n 50 "$LOG")"
