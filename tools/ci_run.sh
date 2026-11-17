@@ -31,9 +31,13 @@ if [ "$rc" -ne 0 ]; then
   # twenty of those pushed the real failure out of the annotation entirely.
   # Gradle's own stack trace is excluded for the same reason - it is long, names
   # no source file, and would consume the budget before any javac error appeared.
-  errors="$(grep -E \
-    'error:|\.java:[0-9]+: error|\.xml:[0-9]+: error|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|There were failing tests|AssertionError|ComparisonFailure|expected:|AAPT:' \
-    "$LOG" | grep -vE '^[[:space:]]*at |warning:' | head -n 200)"
+  # -A 2 matters: javac puts the reason on the line AFTER the error, e.g.
+  #   error: getAccessibilityClassName() cannot override ...
+  #     attempting to assign weaker access privileges; was public
+  # and Gradle puts the expected/actual of a failed assertion there too.
+  errors="$(grep -A 2 -E \
+    'error:|> Task .*FAILED|FAILED$|Could not resolve|Could not find|Unresolved reference|There were failing tests|AssertionError|ComparisonFailure|AAPT:' \
+    "$LOG" | grep -vE '^[[:space:]]*at |warning:|^[0-9]+ error|^--$' | head -n 200)"
 
   # Then the short Gradle summary, which names the failing task and its cause.
   summary="$(grep -E 'What went wrong:|Execution failed for task|A problem occurred' \

@@ -33,6 +33,14 @@ import java.util.List;
  */
 public final class PermissionManager {
 
+    // @SystemApi / @hide in the platform: absent from the public SDK, so they are
+    // spelled out here rather than referenced as constants. Each is guarded by
+    // safeSettingsIntent because support is OEM-dependent.
+    private static final String ACTION_ACCESSIBILITY_DETAILS_SETTINGS =
+            "android.settings.ACCESSIBILITY_DETAILS_SETTINGS";
+    private static final String EXTRA_COMPONENT_NAME = "android.intent.extra.COMPONENT_NAME";
+    private static final String EXTRA_FRAGMENT_ARGS_KEY = ":settings:fragment_args_key";
+
     private PermissionManager() {
     }
 
@@ -126,15 +134,30 @@ public final class PermissionManager {
         }
     }
 
+    /**
+     * Opens this service's own entry in the accessibility list where the platform
+     * supports it, and the list itself otherwise.
+     *
+     * <p>Both the action and its component extra are {@code @SystemApi}, so they
+     * are absent from the public SDK and have to be written out as literals. Not
+     * every OEM Settings implements the specific action, which is why it goes
+     * through {@link #safeSettingsIntent} with two fallbacks rather than being
+     * started directly: an unresolved intent here would look like a dead button.</p>
+     */
     @NonNull
     public static Intent accessibilityIntent(@NonNull Context context) {
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        // Highlight our own entry where the platform supports it (Android 12+).
-        intent.putExtra(":settings:fragment_args_key",
-                new ComponentName(context, BlockAccessibilityService.class).flattenToString());
-        Intent specific = new Intent(Settings.ACTION_ACCESSIBILITY_DETAILS_SETTINGS);
+        String component =
+                new ComponentName(context, BlockAccessibilityService.class).flattenToString();
+
+        Intent specific = new Intent(ACTION_ACCESSIBILITY_DETAILS_SETTINGS);
+        specific.putExtra(EXTRA_COMPONENT_NAME, component);
         specific.setData(Uri.fromParts("package", context.getPackageName(), null));
-        return safeSettingsIntent(specific, Settings.ACTION_ACCESSIBILITY_SETTINGS);
+
+        // Fallback: the full accessibility list, with this service pre-highlighted.
+        Intent list = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        list.putExtra(EXTRA_FRAGMENT_ARGS_KEY, component);
+
+        return safeSettingsIntent(specific, list);
     }
 
     // ------------------------------------------------------------------

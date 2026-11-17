@@ -8,9 +8,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 // androidx.work.Configuration is imported and android.content.res.Configuration is
-// fully qualified at its single use site: both are named Configuration, and the
+// fully qualified at its two use sites: both are named Configuration, and the
 // WorkManager one appears three times (the Provider interface, the override and
-// its Builder) against the framework one's single onConfigurationChanged.
+// its Builder) against the framework one's onConfigurationChanged and the locale
+// wrapper below. Importing both makes every bare `Configuration` ambiguous.
 import androidx.work.Configuration;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
@@ -271,7 +272,8 @@ public class FocusLifeApp extends Application implements Configuration.Provider 
                 Locale locale = new Locale(override);
                 Locale.setDefault(locale);
 
-                Configuration config = new Configuration(base.getResources().getConfiguration());
+                android.content.res.Configuration config =
+                        new android.content.res.Configuration(base.getResources().getConfiguration());
                 config.setLocale(locale);
                 config.setLayoutDirection(locale);
                 return base.createConfigurationContext(config);

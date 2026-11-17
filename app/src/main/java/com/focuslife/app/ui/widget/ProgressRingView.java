@@ -380,11 +380,12 @@ public class ProgressRingView extends View {
     /**
      * Announced as a progress bar rather than a generic view, so TalkBack reads
      * the percentage as a determinate indicator. View exposes no setter for this;
-     * the protected getter is the supported override point.
+     * overriding the getter is the supported route, and it must stay public
+     * because View declares it public.
      */
     @NonNull
     @Override
-    protected CharSequence getAccessibilityClassName() {
+    public CharSequence getAccessibilityClassName() {
         return android.widget.ProgressBar.class.getName();
     }
 
