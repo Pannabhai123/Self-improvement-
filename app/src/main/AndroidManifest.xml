@@ -202,9 +202,26 @@
         <!-- Detects which app came to the foreground so a blocked app can be
              intercepted. It reads window/package names only — never screen
              content, never text, never keystrokes. -->
+        <!--
+          exported MUST be true here, and it is the one component in this manifest
+          where that is correct rather than merely permitted.
+
+          An accessibility service is bound by system_server's
+          AccessibilityManagerService, which is outside this process and does not
+          share its UID. With exported="false" the framework cannot bind it: the
+          user can still toggle the service on in Settings and the toggle stays on,
+          but no window event is ever delivered and nothing is blocked. The
+          BIND_ACCESSIBILITY_SERVICE permission below is what keeps that openness
+          safe - only the OS can bind, no third-party app can.
+
+          This also defeated the app's own reporting: isAccessibilityEnabled()
+          reads Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, which lists the
+          service as enabled regardless of whether it ever bound, so the UI would
+          have said blocking was on while it silently was not.
+        -->
         <service
             android:name=".blocking.BlockAccessibilityService"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/accessibility_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

@@ -319,7 +319,7 @@ with a single `Canvas` pass instead of a view hierarchy.
 ## Localisation
 
 `values/strings.xml` (English base) and `values-hi/strings.xml` are kept at
-**872 keys in exact parity**. The app follows the system language by default;
+**875 keys in exact parity**. The app follows the system language by default;
 Profile offers a per-app override in `{system, en, hi}`.
 
 `FocusLifeApp.attachBaseContext` wraps the base context through
@@ -382,11 +382,11 @@ build:
   a source file
 
 It verifies 1,830 declared resource names, 145 XML documents, 680 `R.*` references,
-431 `@type/name` references, 89 Java sources and 872 strings per locale, and exits
+431 `@type/name` references, 90 Java sources and 875 strings per locale, and exits
 non-zero so it can gate a commit.
 
 **What it cannot check:** Java method existence and arity. That gap is covered by
-the 159 unit tests and by CI compilation — and it is why every API a new screen
+the 164 unit tests and by CI compilation — and it is why every API a new screen
 depends on is read from source before it is called, rather than assumed.
 
 The gap is not theoretical. Three of the checks above were added *after* CI found

@@ -15,7 +15,7 @@ anything on the phone except the APK itself.
 1. Open the repository on **GitHub** in a browser.
 2. Click the **Actions** tab.
 3. Click the **Build APK** workflow, then the most recent run (the top entry).
-4. Wait for the run to finish. A green tick means the 159 unit tests passed *and*
+4. Wait for the run to finish. A green tick means the 164 unit tests passed *and*
    the APK was assembled. A red cross means something broke and no APK was
    produced — that is deliberate: the build refuses to publish an APK whose tests
    fail.

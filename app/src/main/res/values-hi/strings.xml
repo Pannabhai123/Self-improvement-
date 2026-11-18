@@ -866,6 +866,8 @@
     <string name="perm_denied_accessibility_desc">विकेंद्रण गार्ड के बिना फोकस लाइफ यह पता नहीं लगा सकता कि कोई ब्लॉक ऐप खुला। मोड, टाइमर और सभी ट्रैकिंग सामान्य रूप से काम करते रहेंगे।</string>
     <string name="perm_denied_overlay_title">चेतावनी स्क्रीन उपलब्ध नहीं</string>
     <string name="perm_denied_overlay_desc">ओवरले अनुमति के बिना ब्लॉक चेतावनी अन्य ऐप्स पर नहीं खींची जा सकती। ब्लॉकिंग केवल सूचना देगी।</string>
+    <string name="perm_denied_battery_title">बैटरी अनुकूलन अब भी चालू है</string>
+    <string name="perm_denied_battery_desc">इसके बिना भी फोकस लाइफ काम करता है, लेकिन OPPO / ColorOS ऐप खोलने तक रिमाइंडर और गार्ड में देरी कर सकता है। बैकग्राउंड गतिविधि की अनुमति देने से यह अधिकतर ठीक हो जाता है।</string>
     <string name="perm_how_to_usage">सेटिंग्स → ऐप्स → विशेष ऐप एक्सेस → उपयोग एक्सेस → फोकस लाइफ → अनुमति दें</string>
     <string name="perm_how_to_accessibility">सेटिंग्स → सुगम्यता → डाउनलोड की गई सेवाएँ → फोकस लाइफ विकेंद्रण गार्ड → चालू करें</string>
     <string name="perm_how_to_overlay">सेटिंग्स → ऐप्स → फोकस लाइफ → अन्य ऐप्स पर प्रदर्शन की अनुमति दें</string>
@@ -914,6 +916,7 @@
     <string name="profile_blocking_status">विकेंद्रण गार्ड: %1$s</string>
     <string name="profile_status_on">चालू</string>
     <string name="profile_status_off">बंद</string>
+    <string name="profile_status_limited">सीमित</string>
     <string name="profile_target_range">%1$d से %2$d के बीच कोई पूरी संख्या दर्ज करें। यह लक्ष्य बंद करने के लिए 0 रखें।</string>
     <string name="profile_target_saved">लक्ष्य अद्यतन हुआ</string>
     <string name="profile_storage_used">स्थानीय डेटाबेस आकार</string>

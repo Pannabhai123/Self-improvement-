@@ -23,7 +23,7 @@ Full step-by-step instructions, including the OPPO-specific "install from unknow
 sources" prompts, are in **[docs/INSTALL.md](docs/INSTALL.md)**. The APK is
 **5.4 MB**.
 
-The same workflow runs **159 JVM unit tests before** it assembles the APK, so a
+The same workflow runs **164 JVM unit tests before** it assembles the APK, so a
 regression in scoring, blocking or scheduling fails the build instead of shipping.
 The pipeline is green: the tests pass and the APK builds.
 
@@ -95,8 +95,8 @@ app/src/main/java/com/focuslife/app/
 ├── ui/                        MainActivity + 5 tabs, 10 feature screens
 ├── util/                      TimeUtils, PermissionManager, RevisionSchedule, …
 └── work/                      4 workers: snapshot, reminders, report, snooze
-app/src/main/res/              54 layouts, 72 drawables, 872 strings ×2 locales
-app/src/test/                  159 JVM unit tests
+app/src/main/res/              54 layouts, 72 drawables, 875 strings ×2 locales
+app/src/test/                  164 JVM unit tests
 tools/check_resources.py       Static cross-reference auditor (see below)
 docs/                          Install, permissions, architecture, testing report
 ```
@@ -117,7 +117,7 @@ after one download:
 
 # Option B — command line, after downloading the `gradle-wrapper` artifact
 # from any Actions run and unzipping it into gradle/wrapper/:
-./gradlew testDebugUnitTest     # 159 unit tests
+./gradlew testDebugUnitTest     # 164 unit tests
 ./gradlew assembleDebug         # APK at app/build/outputs/apk/debug/
 ```
 
@@ -148,7 +148,7 @@ python3 tools/check_resources.py    # exits non-zero on any problem
 ```
 
 It currently verifies 1,830 declared resource names, 680 `R.*` references, 145 XML
-documents, 431 `@type/name` references, 89 Java sources and 872 strings per locale.
+documents, 431 `@type/name` references, 90 Java sources and 875 strings per locale.
 It cannot check Java method existence or arity — that is what the unit tests and CI
 compilation are for, and [docs/TESTING.md](docs/TESTING.md) records what each of
 them caught.
