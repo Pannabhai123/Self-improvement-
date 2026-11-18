@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One installed app in the picker list. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_row"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/screen_padding"
+    android:paddingTop="@dimen/space_s"
+    android:paddingEnd="@dimen/screen_padding"
+    android:paddingBottom="@dimen/space_s">
+
+    <ImageView
+        android:id="@+id/iv_app_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_phone_android" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_app_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+            tools:text="YouTube" />
+
+        <TextView
+            android:id="@+id/tv_app_package"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            tools:text="com.google.android.youtube" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/check_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/touch_target"
+        android:contentDescription="@string/blocker_selected_count" />
+
+</LinearLayout>

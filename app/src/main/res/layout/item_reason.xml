@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One personal reason, as shown on the block screen.
+
+  The show count is displayed because a reason that has never appeared is a
+  reason that is not working, and the user should be able to see that.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_pill"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_l"
+    android:paddingTop="@dimen/space_m"
+    android:paddingEnd="@dimen/space_xs"
+    android:paddingBottom="@dimen/space_m"
+    android:layout_marginBottom="@dimen/space_s">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_reason_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2dp"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+            tools:text="I am preparing for Railway Group D." />
+
+        <TextView
+            android:id="@+id/tv_reason_shown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            tools:text="Shown 4 times" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_reason_delete"
+        android:layout_width="@dimen/touch_target"
+        android:layout_height="@dimen/touch_target"
+        android:background="@drawable/selectable_row"
+        android:contentDescription="@string/action_delete"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/text_tertiary" />
+</LinearLayout>

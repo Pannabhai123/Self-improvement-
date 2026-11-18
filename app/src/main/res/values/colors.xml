@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Focus Life — premium dark palette.
+
+  Deep navy base, a single cyan/teal accent for "go" states, amber for
+  attention, and a muted rose only for genuine stops. Saturation is kept low on
+  large surfaces so the theme reads as premium rather than neon, which also
+  reduces perceived flicker on the OPPO A18's LCD panel.
+-->
+<resources>
+
+    <!-- ==================== Surfaces ==================== -->
+    <!-- Deepest background, behind everything -->
+    <color name="navy_950">#FF070B16</color>
+    <!-- Primary screen background -->
+    <color name="navy_900">#FF0B1120</color>
+    <!-- Card / elevated surface -->
+    <color name="navy_850">#FF111A2E</color>
+    <!-- Raised surface, bottom sheet, dialogs -->
+    <color name="navy_800">#FF16203A</color>
+    <!-- Input fields, insets -->
+    <color name="navy_750">#FF1C2743</color>
+    <!-- Hairline strokes and dividers -->
+    <color name="navy_700">#FF24314F</color>
+    <color name="navy_600">#FF31405F</color>
+
+    <!-- ==================== Accent ==================== -->
+    <color name="accent_500">#FF22D3EE</color>
+    <color name="accent_400">#FF4FE0F5</color>
+    <color name="accent_600">#FF0EA5C6</color>
+    <color name="accent_700">#FF0B7E98</color>
+    <!-- Translucent accent for rings, chips and glows -->
+    <color name="accent_glow">#3322D3EE</color>
+    <color name="accent_soft">#1A22D3EE</color>
+    <color name="accent_track">#FF1B2740</color>
+
+    <!-- ==================== Semantic ==================== -->
+    <color name="success_500">#FF34D399</color>
+    <color name="success_soft">#1A34D399</color>
+    <color name="warning_500">#FFFBBF24</color>
+    <color name="warning_soft">#1AFBBF24</color>
+    <color name="danger_500">#FFFB7185</color>
+    <color name="danger_soft">#1AFB7185</color>
+    <color name="info_500">#FF818CF8</color>
+    <color name="info_soft">#1A818CF8</color>
+
+    <!-- ==================== Text ==================== -->
+    <color name="text_primary">#FFF1F5FB</color>
+    <color name="text_secondary">#FFA7B4CC</color>
+    <color name="text_tertiary">#FF6E7C99</color>
+    <color name="text_inverse">#FF0B1120</color>
+    <color name="text_on_accent">#FF062029</color>
+
+    <!-- ==================== Chart series ==================== -->
+    <color name="chart_1">#FF22D3EE</color>
+    <color name="chart_2">#FF818CF8</color>
+    <color name="chart_3">#FF34D399</color>
+    <color name="chart_4">#FFFBBF24</color>
+    <color name="chart_5">#FFFB7185</color>
+    <color name="chart_6">#FFA78BFA</color>
+
+    <!-- ==================== Utilities ==================== -->
+    <color name="scrim">#CC04070F</color>
+    <color name="block_overlay">#F2060A14</color>
+    <color name="transparent">#00000000</color>
+    <color name="ic_launcher_background">#FF0B1120</color>
+
+</resources>

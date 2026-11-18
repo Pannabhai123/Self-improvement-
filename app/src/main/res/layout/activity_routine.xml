@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/routine_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/navy_900"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/navy_900"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/text_secondary"
+            app:title="@string/title_routine"
+            app:titleTextColor="@color/text_primary" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/routine_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingEnd="@dimen/screen_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/routine_subtitle"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+            <!-- ============ Now / next ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_now"
+                style="@style/Widget.FocusLife.Card.Accent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/routine_now"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Overline" />
+
+                    <TextView
+                        android:id="@+id/tv_now_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xs"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                        android:textColor="@color/text_primary"
+                        tools:text="Mathematics" />
+
+                    <TextView
+                        android:id="@+id/tv_now_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_xxs"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        tools:text="Since 08:00" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Notification permission ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_notifications_off"
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_notifications_off"
+                        app:tint="@color/warning_500" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/space_m"
+                        android:layout_weight="1"
+                        android:text="@string/routine_notifications_off"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_enable_notifications"
+                        style="@style/Widget.FocusLife.Button.Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/perm_grant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Slots ============ -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_slots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:itemCount="13"
+                tools:listitem="@layout/item_routine_slot" />
+
+            <TextView
+                android:id="@+id/tv_routine_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xl"
+                android:text="@string/routine_empty"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_reset_routine"
+                style="@style/Widget.FocusLife.Button.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/routine_reset"
+                android:textColor="@color/danger_500" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_add_slot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/routine_add_slot"
+        android:textColor="@color/text_on_accent"
+        app:backgroundTint="@color/accent_600"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/text_on_accent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

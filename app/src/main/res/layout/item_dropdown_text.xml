@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dropdown row for exposed-dropdown menus.
+
+  A custom row rather than android.R.layout.simple_list_item_1 so the text meets
+  the app's 16sp body floor and stays legible in Devanagari, where the framework
+  default clips matras at 14sp.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxLines="1"
+    android:minHeight="@dimen/list_item_height"
+    android:paddingStart="@dimen/space_l"
+    android:paddingTop="@dimen/space_m"
+    android:paddingEnd="@dimen/space_l"
+    android:paddingBottom="@dimen/space_m"
+    android:textAppearance="@style/TextAppearance.FocusLife.Body"
+    android:textColor="@color/text_primary"
+    tools:text="Railway Group D" />

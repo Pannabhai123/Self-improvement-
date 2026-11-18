@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/study_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/study_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="@dimen/space_l"
+            android:paddingEnd="@dimen/screen_padding">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_study"
+                android:textAppearance="@style/TextAppearance.FocusLife.Headline" />
+
+            <!-- ============ Today ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card.Accent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/study_daily_target" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:baselineAligned="false"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_study_today"
+                            style="@style/MetricValue"
+                            android:textSize="@dimen/text_headline"
+                            tools:text="3h 20m" />
+
+                        <TextView
+                            android:id="@+id/tv_study_target"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_s"
+                            android:layout_marginBottom="4dp"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                            tools:text="Target: 6h per day" />
+
+                        <TextView
+                            android:id="@+id/btn_edit_target"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/selectable_row"
+                            android:gravity="center"
+                            android:minHeight="@dimen/touch_target"
+                            android:paddingStart="@dimen/space_s"
+                            android:paddingEnd="@dimen/space_s"
+                            android:text="@string/action_edit"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Label"
+                            android:textColor="@color/accent_500" />
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/pb_study"
+                        style="@style/Widget.FocusLife.ProgressHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:max="100"
+                        tools:progress="55" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_study_timer"
+                            style="@style/Widget.FocusLife.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/space_s"
+                            android:layout_weight="1"
+                            android:text="@string/study_timer_start"
+                            app:icon="@drawable/ic_play"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/text_on_accent" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_add_manual"
+                            style="@style/Widget.FocusLife.Button.Outlined"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/space_s"
+                            android:layout_weight="1"
+                            android:text="@string/study_log_manual" />
+                    </LinearLayout>
+
+                    <!-- Running study timer state -->
+                    <LinearLayout
+                        android:id="@+id/study_timer_running"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_m"
+                        android:background="@drawable/bg_pill_accent"
+                        android:gravity="center_vertical"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/space_l"
+                        android:paddingEnd="@dimen/space_s"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/tv_study_timer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                            tools:text="Timing Mathematics · 00:12:40" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_stop_study_timer"
+                            style="@style/Widget.FocusLife.Button.Text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/action_stop" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Exam / subject filters ============ -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:clipToPadding="false"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_exam"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:clipToPadding="false"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_subject"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+
+            <!-- ============ Revision due ============ -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_revision"
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_undo"
+                            app:tint="@color/warning_500" />
+
+                        <TextView
+                            style="@style/CardTitle"
+                            android:layout_width="0dp"
+                            android:layout_marginStart="@dimen/space_s"
+                            android:layout_weight="1"
+                            android:text="@string/study_revision_due" />
+
+                        <TextView
+                            android:id="@+id/tv_revision_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+                            android:textColor="@color/warning_500"
+                            tools:text="4" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_revision_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:text="@string/study_revision_interval_desc"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+                    <LinearLayout
+                        android:id="@+id/revision_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:orientation="vertical" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ============ Topics ============ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/study_topics" />
+
+                <TextView
+                    android:id="@+id/tv_topic_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                    tools:text="6 of 24 topics complete" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_topics_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_m"
+                android:text="@string/study_no_topics"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_topics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_s"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_study_topic" />
+
+            <!-- ============ Weekly statistics ============ -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.FocusLife.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_l">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:text="@string/study_weekly_stats" />
+
+                    <com.focuslife.app.ui.widget.BarChartView
+                        android:id="@+id/chart_subjects"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/chart_height_tall"
+                        android:layout_marginTop="@dimen/space_m"
+                        app:bcv_highlightLast="false"
+                        app:bcv_showValues="true" />
+
+                    <TextView
+                        android:id="@+id/tv_week_total"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_s"
+                        android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                        tools:text="18h 20m this week" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_add_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/study_add_topic"
+        android:textColor="@color/text_on_accent"
+        app:backgroundTint="@color/accent_600"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/text_on_accent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

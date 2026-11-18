@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CONTROL YOURSELF.
+
+  The four-step routine sits at the top rather than buried below the statistics,
+  because this screen is opened at the moment of an urge — when the useful thing
+  is an action, not a chart. The diary and trigger analysis follow, for the
+  calmer moment when the pattern is worth studying.
+-->
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/control_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_900"
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/space_xxl"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="@dimen/space_l"
+        android:paddingEnd="@dimen/screen_padding">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="-16dp"
+            android:background="@color/navy_900"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:navigationIconTint="@color/text_secondary"
+            app:title="@string/title_control_yourself"
+            app:titleTextColor="@color/text_primary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/control_subtitle"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+        <!-- ============ Emergency focus ============ -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_emergency_focus"
+            style="@style/Widget.FocusLife.Button"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/control_emergency_focus"
+            android:textSize="@dimen/text_subtitle"
+            app:icon="@drawable/ic_bolt"
+            app:iconGravity="textStart"
+            app:iconTint="@color/text_on_accent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:text="@string/control_emergency_focus_desc"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+        <!-- ============ The four steps ============ -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.FocusLife.Card.Accent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="@string/control_step_title" />
+
+                <include
+                    android:id="@+id/step_row_1"
+                    layout="@layout/item_reset_step" />
+
+                <include
+                    android:id="@+id/step_row_2"
+                    layout="@layout/item_reset_step" />
+
+                <include
+                    android:id="@+id/step_row_3"
+                    layout="@layout/item_reset_step" />
+
+                <include
+                    android:id="@+id/step_row_4"
+                    layout="@layout/item_reset_step" />
+
+                <!-- The urge decay fact is what makes waiting feel like a tactic
+                     rather than a punishment. -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_m"
+                    android:text="@string/block_cooldown_hint"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ============ 5-minute alternatives ============ -->
+        <TextView
+            style="@style/CardTitle"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/control_alternatives" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:text="@string/control_alternatives_desc"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_alternatives"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            app:chipSpacingVertical="@dimen/space_s" />
+
+        <!-- ============ Today's numbers ============ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/metric_resisted"
+                layout="@layout/item_metric_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_s"
+                android:layout_weight="1" />
+
+            <include
+                android:id="@+id/metric_minutes_lost"
+                layout="@layout/item_metric_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- ============ Triggers ============ -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.FocusLife.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:text="@string/control_triggers" />
+
+                <TextView
+                    android:id="@+id/tv_top_trigger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_s"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+                    tools:text="Most often: boredom" />
+
+                <com.focuslife.app.ui.widget.BarChartView
+                    android:id="@+id/chart_triggers"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/chart_height"
+                    android:layout_marginTop="@dimen/space_m"
+                    app:bcv_highlightLast="false"
+                    app:bcv_showValues="true" />
+
+                <TextView
+                    android:id="@+id/tv_triggers_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/control_triggers_empty"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ============ My reasons ============ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/CardTitle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/control_reasons" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_reason"
+                style="@style/Widget.FocusLife.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/control_add_reason" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_reason_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/control_reason_hint"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption" />
+
+        <LinearLayout
+            android:id="@+id/reason_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/tv_reason_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/control_reason_empty"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+        <!-- ============ Diary ============ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/CardTitle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="@string/control_diary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_entry"
+                style="@style/Widget.FocusLife.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/control_add_entry" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_diary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_distraction" />
+
+        <TextView
+            android:id="@+id/tv_diary_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_m"
+            android:text="@string/control_diary_empty"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

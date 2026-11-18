@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Spacing and type scale.
+
+  The brief asks for "large readable Hindi text". Devanagari has taller
+  conjuncts and matras than Latin, so body sizes start at 16sp and line
+  heights are generous; nothing interactive is smaller than 48dp.
+-->
+<resources>
+
+    <!-- ==================== Spacing ==================== -->
+    <dimen name="space_xxs">2dp</dimen>
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">12dp</dimen>
+    <dimen name="space_l">16dp</dimen>
+    <dimen name="space_xl">20dp</dimen>
+    <dimen name="space_xxl">24dp</dimen>
+    <dimen name="space_huge">32dp</dimen>
+
+    <!-- Screen gutter. 16dp keeps lines short enough to read comfortably. -->
+    <dimen name="screen_padding">16dp</dimen>
+
+    <!-- ==================== Cards ==================== -->
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="card_radius_small">14dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_elevation">0dp</dimen>
+    <dimen name="card_stroke">1dp</dimen>
+
+    <!-- ==================== Type ==================== -->
+    <!-- Display: the big score number and the focus timer -->
+    <dimen name="text_display">56sp</dimen>
+    <dimen name="text_display_small">40sp</dimen>
+    <dimen name="text_timer">64sp</dimen>
+    <dimen name="text_headline">28sp</dimen>
+    <dimen name="text_title">21sp</dimen>
+    <dimen name="text_subtitle">18sp</dimen>
+    <!-- Body never drops below 16sp for Devanagari legibility -->
+    <dimen name="text_body">16sp</dimen>
+    <dimen name="text_body_small">15sp</dimen>
+    <dimen name="text_label">14sp</dimen>
+    <dimen name="text_caption">13sp</dimen>
+
+    <dimen name="line_height_body">24sp</dimen>
+    <dimen name="line_height_title">28sp</dimen>
+
+    <!-- ==================== Progress rings ==================== -->
+    <dimen name="ring_dashboard">200dp</dimen>
+    <dimen name="ring_stroke">14dp</dimen>
+    <dimen name="ring_small">64dp</dimen>
+    <dimen name="ring_small_stroke">7dp</dimen>
+    <dimen name="ring_track_stroke">14dp</dimen>
+
+    <!-- ==================== Charts ==================== -->
+    <dimen name="chart_height">160dp</dimen>
+    <dimen name="chart_height_tall">220dp</dimen>
+    <dimen name="chart_bar_radius">6dp</dimen>
+
+    <!-- ==================== Components ==================== -->
+    <dimen name="touch_target">48dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="bottom_nav_height">64dp</dimen>
+    <dimen name="fab_margin">20dp</dimen>
+    <dimen name="list_item_height">64dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="habit_check_size">30dp</dimen>
+
+    <!-- ==================== Block overlay ==================== -->
+    <dimen name="block_icon">88dp</dimen>
+    <dimen name="block_title">26sp</dimen>
+    <dimen name="block_body">18sp</dimen>
+
+</resources>

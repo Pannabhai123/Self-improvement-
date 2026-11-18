@@ -1,0 +1,10 @@
+// Focus Life - root build script
+// Plugins are declared here and applied (without version) in :app so that a single
+// place controls the toolchain versions.
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

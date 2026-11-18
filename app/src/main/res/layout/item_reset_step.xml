@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One line of the four-step reset routine shown on the block screen and inside
+  Control Yourself: a number badge plus the instruction.
+
+  Kept as its own layout so the same four rows are used in both places and the
+  wording can never drift between them.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/space_s"
+    android:background="@drawable/bg_pill"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_m"
+    android:paddingTop="@dimen/space_m"
+    android:paddingEnd="@dimen/space_l"
+    android:paddingBottom="@dimen/space_m">
+
+    <TextView
+        android:id="@+id/tv_step_number"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/bg_circle_accent"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textAppearance="@style/TextAppearance.FocusLife.Label"
+        android:textColor="@color/text_on_accent"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/tv_step_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:layout_weight="1"
+        android:lineSpacingExtra="2dp"
+        android:textAppearance="@style/TextAppearance.FocusLife.Body"
+        tools:text="Put the phone face-down, out of arm's reach." />
+
+</LinearLayout>

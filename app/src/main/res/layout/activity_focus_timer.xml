@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Deep Focus full-screen timer.
+
+  Nothing on this screen is tappable except the timer controls. There is no
+  navigation bar, no back arrow and no list of other things to look at, because
+  every additional affordance is an additional exit from the session.
+
+  The ring is 260dp — large enough to read the remaining time from arm's length
+  with the phone on a desk, which is how it is actually used while studying.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/focus_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/navy_950"
+    android:keepScreenOn="true"
+    tools:context=".ui.focus.FocusTimerActivity">
+
+    <!-- Session context: what you are working on, and which round -->
+    <TextView
+        android:id="@+id/tv_task"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_xxl"
+        android:layout_marginTop="@dimen/space_huge"
+        android:layout_marginEnd="@dimen/space_xxl"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+        android:textColor="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Mathematics — Number System" />
+
+    <TextView
+        android:id="@+id/tv_phase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_s"
+        android:textAppearance="@style/TextAppearance.FocusLife.Overline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_task"
+        tools:text="Session 2 of 4" />
+
+    <!-- Timer ring -->
+    <FrameLayout
+        android:id="@+id/ring_container"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:id="@+id/ring_glow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_ring_glow" />
+
+        <com.focuslife.app.ui.widget.ProgressRingView
+            android:id="@+id/ring_timer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:prv_animate="false"
+            app:prv_labelText="@string/focus_remaining"
+            app:prv_labelTextSize="@dimen/text_label"
+            app:prv_max="1000"
+            app:prv_progress="1000"
+            app:prv_showGlow="true"
+            app:prv_strokeWidth="16dp"
+            app:prv_trackStrokeWidth="16dp"
+            app:prv_valueTextSize="52sp" />
+    </FrameLayout>
+
+    <!-- Blocking status -->
+    <LinearLayout
+        android:id="@+id/block_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xxl"
+        android:background="@drawable/bg_pill"
+        android:gravity="center_vertical"
+        android:minHeight="36dp"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_l"
+        android:paddingEnd="@dimen/space_l"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ring_container">
+
+        <ImageView
+            android:id="@+id/iv_block_status"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_shield"
+            app:tint="@color/success_500" />
+
+        <TextView
+            android:id="@+id/tv_block_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_s"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            android:textColor="@color/text_secondary"
+            tools:text="Deep Focus Mode on — blocked apps stay blocked" />
+    </LinearLayout>
+
+    <!-- Controls -->
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginEnd="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/space_xxl"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_give_up"
+            style="@style/Widget.FocusLife.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="@dimen/space_s"
+            android:layout_weight="1"
+            android:text="@string/action_stop"
+            android:textColor="@color/danger_500"
+            app:strokeColor="@color/danger_500" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pause"
+            style="@style/Widget.FocusLife.Button"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="@dimen/space_s"
+            android:layout_weight="1.4"
+            android:text="@string/action_pause"
+            android:textSize="@dimen/text_subtitle"
+            app:icon="@drawable/ic_pause"
+            app:iconGravity="textStart"
+            app:iconTint="@color/text_on_accent" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ============================================================
+         PERMISSIONS
+         Every permission below is requested in-app with an explanation
+         screen first. Nothing is collected, nothing leaves the device.
+         There is no INTERNET permission: Focus Life is fully offline.
+         ============================================================ -->
+
+    <!-- Daily report / routine / revision reminders (runtime grant on Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Keeps Deep Focus Mode and Study/Run/Sleep Mode alive while the screen is on -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Full-screen "you are blocked" warning drawn over a distracting app -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Restore routine reminders after the phone restarts -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Used only to suggest turning off battery optimisation so reminders are
+         not delayed on aggressive OEM schedulers (ColorOS on the OPPO A18). -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+        tools:ignore="BatteryLife" />
+
+    <!--
+        Listing the installed apps so the user can pick which ones to block.
+        QUERY_ALL_PACKAGES is required on Android 11+ to see the full list in
+        the app picker. It grants visibility only — no data is read from or
+        written to those apps. This build is distributed outside Google Play
+        (sideloaded APK), where the declaration is permitted.
+    -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+        <application
+        android:name=".FocusLifeApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="false"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FocusLife"
+        tools:targetApi="34">
+
+        <!--
+            FocusLifeApp implements androidx.work.Configuration.Provider so that
+            WorkManager runs on the shared 2-thread IO executor instead of
+            creating its own. That only takes effect if WorkManager's automatic
+            manifest initializer is removed; leaving both would mean the custom
+            Configuration is silently ignored.
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
+        <!-- ==================== MAIN SHELL ==================== -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.FocusLife"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ==================== ONBOARDING / PERMISSIONS ==================== -->
+        <activity
+            android:name=".ui.onboarding.OnboardingActivity"
+            android:exported="false"
+            android:label="@string/title_permissions"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- ==================== DEEP FOCUS ==================== -->
+        <!-- Immersive, full-screen, distraction-free. Excluded from Recents
+             preview so the timer cannot be swiped away by accident. -->
+        <activity
+            android:name=".ui.focus.FocusTimerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:excludeFromRecents="false"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"
+            android:showWhenLocked="false"
+            android:theme="@style/Theme.FocusLife.Fullscreen"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
+        <!-- ==================== APP BLOCKER ==================== -->
+        <!-- Full-screen interception shown over a blocked app.
+             singleInstance + its own task so it reliably covers the foreground
+             app, and excluded from Recents so it cannot be bypassed by
+             switching to a recent task. -->
+        <activity
+            android:name=".blocking.BlockWarningActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:taskAffinity="com.focuslife.app.block"
+            android:theme="@style/Theme.FocusLife.Block" />
+
+        <activity
+            android:name=".blocking.EmergencyUnlockActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleInstance"
+            android:taskAffinity="com.focuslife.app.block"
+            android:theme="@style/Theme.FocusLife.Block" />
+
+        <activity
+            android:name=".ui.blocker.AppPickerActivity"
+            android:exported="false"
+            android:label="@string/title_select_apps"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.blocker.AppLimitActivity"
+            android:exported="false"
+            android:label="@string/title_usage_limits"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.control.ControlYourselfActivity"
+            android:exported="false"
+            android:label="@string/title_control_yourself"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.report.ReportActivity"
+            android:exported="false"
+            android:label="@string/title_daily_report"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.fitness.FitnessActivity"
+            android:exported="false"
+            android:label="@string/title_fitness"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.motivation.MotivationActivity"
+            android:exported="false"
+            android:label="@string/title_motivation"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <activity
+            android:name=".ui.routine.RoutineActivity"
+            android:exported="false"
+            android:label="@string/title_routine"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- Reads UsageStatsManager only. No INTERNET permission is declared
+             anywhere in this manifest, so usage data cannot leave the device. -->
+        <activity
+            android:name=".ui.usage.UsageAnalyzerActivity"
+            android:exported="false"
+            android:label="@string/title_usage"
+            android:parentActivityName=".ui.MainActivity" />
+
+        <!-- ==================== FOREGROUND SERVICE ==================== -->
+        <!-- Drives Study / Running / Sleep / Deep Focus modes and the
+             accessibility block check. specialUse because it guards the
+             screen against user-defined distractions. -->
+        <service
+            android:name=".blocking.BlockForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Enforces user-configured distraction blocking during focus, study, running and sleep modes." />
+        </service>
+
+        <!-- ==================== ACCESSIBILITY SERVICE ==================== -->
+        <!-- Detects which app came to the foreground so a blocked app can be
+             intercepted. It reads window/package names only — never screen
+             content, never text, never keystrokes. -->
+        <service
+            android:name=".blocking.BlockAccessibilityService"
+            android:exported="false"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- ==================== RECEIVERS ==================== -->
+        <receiver
+            android:name=".notify.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".notify.RoutineAlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".notify.NotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The five destinations required by the brief.
+  IDs double as the FragmentManager tags so that state is preserved when
+  switching tabs, which is what keeps a half-filled habit checklist or a
+  running focus timer alive across navigation.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/nav_home" />
+
+    <item
+        android:id="@+id/nav_focus"
+        android:icon="@drawable/ic_timer"
+        android:title="@string/nav_focus" />
+
+    <item
+        android:id="@+id/nav_study"
+        android:icon="@drawable/ic_book"
+        android:title="@string/nav_study" />
+
+    <item
+        android:id="@+id/nav_habits"
+        android:icon="@drawable/ic_check_circle"
+        android:title="@string/nav_habits" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_person"
+        android:title="@string/nav_profile" />
+
+</menu>

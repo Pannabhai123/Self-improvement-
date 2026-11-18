@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One blocked app: what it is, how it is blocked, and its daily budget.
+
+  The mode flags are chips rather than switches because five separate switches per
+  app would make the list unreadable, and the chips read as one sentence:
+  "blocked in Focus, Study, Sleep · 30 min/day".
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.FocusLife.Card.Flat"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_s"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/selectable_row">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/card_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_app_icon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:contentDescription="@null"
+                tools:src="@drawable/ic_phone_android" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_m"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_app_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                    tools:text="YouTube" />
+
+                <TextView
+                    android:id="@+id/tv_app_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                    tools:text="Blocked in Focus, Study · 45 min left today" />
+            </LinearLayout>
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switch_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/blocker_block_always"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/touch_target" />
+
+            <ImageButton
+                android:id="@+id/btn_remove"
+                android:layout_width="@dimen/touch_target"
+                android:layout_height="@dimen/touch_target"
+                android:background="@drawable/selectable_row"
+                android:contentDescription="@string/blocker_remove"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/text_tertiary" />
+        </LinearLayout>
+
+        <!-- Only shown when the app is over its limit today, which is the moment
+             the number actually matters. -->
+        <TextView
+            android:id="@+id/tv_over_limit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:background="@drawable/bg_pill"
+            android:padding="@dimen/space_s"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            android:textColor="@color/warning_500"
+            android:visibility="gone"
+            tools:text="Daily limit reached · blocked until midnight"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Focus Life theme.
+
+  Dark is the only theme: the brief specifies a premium dark UI, and shipping a
+  single scheme halves the number of style permutations that have to be tested
+  and keeps the resource table small on a 4 GB device.
+
+  Parent is Material3 so that MaterialSwitch, extended FABs, chips and the
+  bottom navigation all render with modern motion and shape. Every colour
+  attribute that Material3 reads is overridden to the deep-navy palette, so
+  nothing inherits the default purple surface.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.FocusLife" parent="Theme.Material3.Dark.NoActionBar">
+
+        <!-- ============ Colour scheme ============ -->
+        <item name="colorPrimary">@color/accent_500</item>
+        <item name="colorOnPrimary">@color/text_on_accent</item>
+        <item name="colorPrimaryContainer">@color/navy_750</item>
+        <item name="colorOnPrimaryContainer">@color/accent_400</item>
+        <item name="colorPrimaryInverse">@color/navy_900</item>
+
+        <item name="colorSecondary">@color/info_500</item>
+        <item name="colorOnSecondary">@color/text_on_accent</item>
+        <item name="colorSecondaryContainer">@color/navy_750</item>
+        <item name="colorOnSecondaryContainer">@color/info_500</item>
+
+        <item name="colorTertiary">@color/success_500</item>
+        <item name="colorOnTertiary">@color/text_on_accent</item>
+        <item name="colorTertiaryContainer">@color/navy_750</item>
+        <item name="colorOnTertiaryContainer">@color/success_500</item>
+
+        <item name="colorError">@color/danger_500</item>
+        <item name="colorOnError">@color/text_on_accent</item>
+        <item name="colorErrorContainer">@color/danger_soft</item>
+        <item name="colorOnErrorContainer">@color/danger_500</item>
+
+        <item name="android:colorBackground">@color/navy_900</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/navy_850</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/navy_800</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorSurfaceInverse">@color/navy_800</item>
+        <item name="colorOnSurfaceInverse">@color/text_primary</item>
+        <item name="colorOutline">@color/navy_600</item>
+        <item name="colorOutlineVariant">@color/navy_700</item>
+        <item name="colorSurfaceContainer">@color/navy_850</item>
+        <item name="colorSurfaceContainerHigh">@color/navy_800</item>
+        <item name="colorSurfaceContainerHighest">@color/navy_750</item>
+        <item name="colorSurfaceContainerLow">@color/navy_850</item>
+        <item name="colorSurfaceContainerLowest">@color/navy_900</item>
+        <item name="colorSurfaceBright">@color/navy_800</item>
+        <item name="colorSurfaceDim">@color/navy_950</item>
+
+        <!-- ============ System chrome ============ -->
+        <!-- Draw edge-to-edge but keep the status bar legible over navy. -->
+        <item name="android:statusBarColor">@color/navy_950</item>
+        <item name="android:navigationBarColor">@color/navy_950</item>
+        <item name="android:windowBackground">@color/navy_900</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+
+        <!-- ============ Type ============ -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorTertiary">@color/text_tertiary</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="fontFamily">sans-serif-medium</item>
+
+        <!-- ============ Components ============ -->
+        <item name="bottomNavigationStyle">@style/Widget.FocusLife.BottomNav</item>
+        <item name="materialCardViewStyle">@style/Widget.FocusLife.Card</item>
+        <item name="materialButtonStyle">@style/Widget.FocusLife.Button</item>
+        <item name="textInputStyle">@style/Widget.FocusLife.TextInput</item>
+        <item name="switchStyle">@style/Widget.FocusLife.Switch</item>
+        <item name="checkboxStyle">@style/Widget.FocusLife.CheckBox</item>
+        <item name="radioButtonStyle">@style/Widget.FocusLife.RadioButton</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.FocusLife.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.FocusLife.BottomSheet</item>
+        <item name="chipStyle">@style/Widget.FocusLife.Chip</item>
+        <item name="sliderStyle">@style/Widget.FocusLife.Slider</item>
+        <item name="toolbarStyle">@style/Widget.FocusLife.Toolbar</item>
+        <item name="android:progressBarStyleHorizontal">@style/Widget.FocusLife.ProgressHorizontal</item>
+
+        <!-- Minimal animation: the brief asks for restraint, and reduced motion
+             also lowers frame cost on a Helio G85. -->
+        <item name="android:windowAnimationStyle">@style/Animation.FocusLife.Window</item>
+    </style>
+
+    <!-- ============================================================
+         Full-screen variant used by the Deep Focus timer.
+         Hides both system bars and keeps them hidden when the user
+         swipes, so the session cannot be left by accident.
+         ============================================================ -->
+    <style name="Theme.FocusLife.Fullscreen">
+        <item name="android:statusBarColor">@color/navy_950</item>
+        <item name="android:navigationBarColor">@color/navy_950</item>
+        <item name="android:windowBackground">@color/navy_950</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+    </style>
+
+    <!-- ============================================================
+         Variant for the block warning and emergency unlock screens.
+         They are drawn over another app, so the window must be
+         translucent-capable and must not animate in a way that lets
+         the blocked app remain visible.
+         ============================================================ -->
+    <style name="Theme.FocusLife.Block">
+        <item name="android:windowBackground">@color/block_overlay</item>
+        <item name="android:statusBarColor">@color/navy_950</item>
+        <item name="android:navigationBarColor">@color/navy_950</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="28">shortEdges</item>
+    </style>
+
+    <!-- Transparent variant for activities that only host a dialog. -->
+    <style name="Theme.FocusLife.Transparent">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.72</item>
+    </style>
+
+</resources>

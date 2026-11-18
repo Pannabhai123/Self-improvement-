@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One exercise in the daily checklist.
+
+  Tapping the row records the target reps in one action, because a checklist that
+  asks how many reps you did is no longer a checklist. Long-press opens the reps
+  field for the days that differ.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.FocusLife.Card.Flat"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_s"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="@drawable/selectable_row">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/list_item_height"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/space_m"
+        android:paddingTop="@dimen/space_m"
+        android:paddingEnd="@dimen/space_m"
+        android:paddingBottom="@dimen/space_m">
+
+        <FrameLayout
+            android:layout_width="@dimen/habit_check_size"
+            android:layout_height="@dimen/habit_check_size">
+
+            <ImageView
+                android:id="@+id/iv_check_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:src="@drawable/habit_check_bg" />
+
+            <ImageView
+                android:id="@+id/iv_check_mark"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_check_white"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_m"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_workout_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.FocusLife.Body"
+                tools:text="Pull-ups" />
+
+            <TextView
+                android:id="@+id/tv_workout_target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xxs"
+                android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+                tools:text="Target 10 reps · best 12" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_workout_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.FocusLife.Subtitle"
+            android:textColor="@color/success_500"
+            tools:text="12" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

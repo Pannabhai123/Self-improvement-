@@ -1,0 +1,242 @@
+# ============================================================
+#  Focus Life — APK build pipeline
+# ============================================================
+#  Produces an installable, debug-signed APK on every push and
+#  attaches it to the run as a downloadable artifact.
+#
+#  Download it from:
+#    GitHub → Actions → "Build APK" → latest run → Artifacts
+# ============================================================
+
+name: Build APK
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Assemble & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # The ubuntu-latest runner image already ships the Android SDK with
+      # ANDROID_HOME set, so this step locates it, accepts licences and makes sure
+      # the platform and build-tools this project compiles against are present.
+      # It deliberately does not depend on a third-party action: an action that
+      # re-downloads command-line tools is a single point of failure which aborts
+      # the whole job before any compilation happens.
+      - name: Set up Android SDK
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK" ]; then
+            echo "::error::Android SDK not found at $SDK"
+            exit 1
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          echo "SDK: $SDK"
+
+          SDKMANAGER="$(find "$SDK/cmdline-tools" -type f -name sdkmanager \
+                          -path '*/bin/*' 2>/dev/null | sort | tail -n1)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "::error::sdkmanager not found under $SDK/cmdline-tools"
+            find "$SDK" -maxdepth 2 -type d | sort
+            exit 1
+          fi
+          echo "sdkmanager: $SDKMANAGER"
+
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-34" \
+                        "build-tools;34.0.0" > /dev/null
+
+          echo "platforms:  $(ls "$SDK/platforms" 2>/dev/null | tr '\n' ' ')"
+          echo "build-tools: $(ls "$SDK/build-tools" 2>/dev/null | tr '\n' ' ')"
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      # The repository intentionally does NOT commit gradle-wrapper.jar (a binary
+      # blob). We bootstrap a Gradle distribution here and let it generate the
+      # wrapper, which is then uploaded as an artifact for local development.
+      - name: Bootstrap Gradle 8.7
+        run: |
+          set -euo pipefail
+          GRADLE_VERSION=8.7
+          # The runner image ships its own Gradle, usually a different version.
+          # Record it so a version mismatch is visible rather than inferred.
+          if command -v gradle > /dev/null 2>&1; then
+            echo "::notice title=Runner Gradle::$(gradle --version 2>/dev/null \
+              | grep -E '^Gradle' | head -n1)"
+          fi
+          curl -fsSL -o /tmp/gradle.zip \
+            "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
+          sudo mkdir -p /opt/gradle
+          sudo unzip -q -o /tmp/gradle.zip -d /opt/gradle
+          echo "/opt/gradle/gradle-${GRADLE_VERSION}/bin" >> "$GITHUB_PATH"
+          # An absolute path, exported for later steps, so the build never depends
+          # on PATH ordering between the runner's own Gradle and this one.
+          echo "FL_GRADLE=/opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle" >> "$GITHUB_ENV"
+          /opt/gradle/gradle-${GRADLE_VERSION}/bin/gradle --version
+
+      # The wrapper is a convenience for local development, not a build
+      # requirement: the steps below invoke the bootstrapped Gradle directly. So
+      # this is allowed to fail without taking the APK down with it. It goes
+      # through the same helper as the build steps, so there is one place that
+      # knows how to turn a failure into a readable annotation.
+      - name: Generate Gradle wrapper
+        continue-on-error: true
+        run: bash tools/ci_run.sh wrapper wrapper --gradle-version 8.7 --distribution-type bin
+
+      - name: Make gradlew executable
+        run: |
+          if [ -f gradlew ]; then
+            chmod +x gradlew
+            ls -l gradlew gradle/wrapper/
+          else
+            echo "::warning::gradlew was not generated; the wrapper artifact will be empty"
+          fi
+
+      # Both steps run through tools/ci_run.sh, which publishes javac, aapt2 and
+      # test failures as annotations. That is not cosmetics: without it a failed
+      # build reports only "Process completed with exit code 1".
+      - name: Unit tests (JVM — scoring, date & usage logic)
+        run: bash tools/ci_run.sh unit-tests testDebugUnitTest
+
+      - name: Assemble debug APK
+        run: bash tools/ci_run.sh assemble assembleDebug
+
+      - name: Locate APK
+        id: apk
+        run: |
+          APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -n1)
+          echo "path=$APK" >> "$GITHUB_OUTPUT"
+          echo "size=$(du -h "$APK" | cut -f1)" >> "$GITHUB_OUTPUT"
+          ls -lh "$APK"
+
+      - name: Rename APK
+        run: |
+          cp "${{ steps.apk.outputs.path }}" FocusLife-v1.0.0-debug.apk
+          ls -lh FocusLife-v1.0.0-debug.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusLife-debug-APK
+          path: FocusLife-v1.0.0-debug.apk
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload Gradle wrapper (for local builds)
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-wrapper
+          path: gradle/wrapper/gradle-wrapper.jar
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Build summary
+        run: |
+          {
+            echo "### ✅ Focus Life APK built"
+            echo ""
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| APK | \`FocusLife-v1.0.0-debug.apk\` |"
+            echo "| Size | ${{ steps.apk.outputs.size }} |"
+            echo "| minSdk | 29 (Android 10) |"
+            echo "| targetSdk | 34 (Android 14) |"
+            echo "| Signature | debug key — installable directly |"
+            echo ""
+            echo "Download from **Artifacts** below."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ------------------------------------------------------------
+  # Optional: signed release build. Runs only when the repository
+  # has the signing secrets configured.
+  # ------------------------------------------------------------
+  release:
+    name: Signed release APK
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        run: |
+          set -euo pipefail
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+          SDKMANAGER="$(find "$SDK/cmdline-tools" -type f -name sdkmanager \
+                          -path '*/bin/*' 2>/dev/null | sort | tail -n1)"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platform-tools" "platforms;android-34" \
+                        "build-tools;34.0.0" > /dev/null
+
+      - name: Decode keystore
+        env:
+          FOCUSLIFE_KEYSTORE_B64: ${{ secrets.FOCUSLIFE_KEYSTORE_B64 }}
+        run: |
+          if [ -z "${FOCUSLIFE_KEYSTORE_B64:-}" ]; then
+            echo "::error::FOCUSLIFE_KEYSTORE_B64 is not set. This job needs the four signing secrets; see docs/INSTALL.md."
+            exit 1
+          fi
+          echo "$FOCUSLIFE_KEYSTORE_B64" | base64 -d > /tmp/release.jks
+          echo "keystore decoded to /tmp/release.jks
+
+      - name: Bootstrap Gradle & wrapper
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          sudo unzip -q /tmp/gradle.zip -d /opt/gradle
+          echo "/opt/gradle/gradle-8.7/bin" >> "$GITHUB_PATH"
+          echo "FL_GRADLE=/opt/gradle/gradle-8.7/bin/gradle" >> "$GITHUB_ENV"
+          /opt/gradle/gradle-8.7/bin/gradle wrapper --gradle-version 8.7 \
+            --distribution-type bin || echo "::warning::wrapper generation failed"
+          chmod +x gradlew || true
+
+      - name: Assemble release
+        env:
+          FOCUSLIFE_KEYSTORE_PATH: /tmp/release.jks
+          FOCUSLIFE_STORE_PASSWORD: ${{ secrets.FOCUSLIFE_STORE_PASSWORD }}
+          FOCUSLIFE_KEY_ALIAS: ${{ secrets.FOCUSLIFE_KEY_ALIAS }}
+          FOCUSLIFE_KEY_PASSWORD: ${{ secrets.FOCUSLIFE_KEY_PASSWORD }}
+        run: bash tools/ci_run.sh release assembleRelease
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: FocusLife-release-APK
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+          retention-days: 90

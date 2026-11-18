@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One practical reduction suggestion. Tips are chosen from today's measured data
+  and are phrased as options, never as instructions or verdicts.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/space_s"
+    android:background="@drawable/bg_pill"
+    android:minHeight="@dimen/list_item_height"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/space_l"
+    android:paddingTop="@dimen/space_m"
+    android:paddingEnd="@dimen/space_l"
+    android:paddingBottom="@dimen/space_m">
+
+    <ImageView
+        android:id="@+id/iv_tip_icon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="2dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_sparkles"
+        app:tint="@color/info_500" />
+
+    <TextView
+        android:id="@+id/tv_tip_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_m"
+        android:layout_weight="1"
+        android:lineSpacingExtra="4dp"
+        android:textAppearance="@style/TextAppearance.FocusLife.Body.Secondary"
+        tools:text="Turn off all notifications except calls and messages. Most openings start with a ping." />
+</LinearLayout>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A scheduled blocking window: a time range, the days it applies to, and which
+  mode it implies.
+
+  A schedule is the automatic form of a mode — "every night from 21:00 to 04:30
+  behave as though Sleep Mode is on" — so the mode picker is the central choice
+  and the range is how it is expressed.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xxl"
+        android:paddingTop="@dimen/space_l"
+        android:paddingEnd="@dimen/space_xxl"
+        android:paddingBottom="@dimen/space_s">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.FocusLife.TextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/blocker_schedule_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="40"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ============ Time range ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/blocker_schedule_time_range"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="@dimen/space_s"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:textSize="@dimen/text_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_end"
+                style="@style/Widget.FocusLife.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="@dimen/space_s"
+                android:layout_weight="1"
+                android:fontFeatureSettings="tnum"
+                android:textSize="@dimen/text_title" />
+        </LinearLayout>
+
+        <!-- Crossing midnight is a legitimate and common configuration, so it is
+             announced rather than rejected. -->
+        <TextView
+            android:id="@+id/tv_crosses_midnight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:text="@string/blocker_schedule_crosses_midnight"
+            android:textAppearance="@style/TextAppearance.FocusLife.Caption"
+            android:textColor="@color/info_500"
+            android:visibility="gone" />
+
+        <!-- ============ Mode ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/blocker_schedule_mode"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+        </HorizontalScrollView>
+
+        <!-- ============ Days ============ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:text="@string/blocker_schedule_days"
+            android:textAppearance="@style/TextAppearance.FocusLife.Label" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_s"
+            app:singleSelection="false">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_sun"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_sun" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_mon"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_mon" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_tue"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_tue" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_wed"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_wed" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_thu"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_thu" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_fri"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_fri" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/day_sat"
+                style="@style/Widget.FocusLife.Button.Outlined.DayToggle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/weekday_initial_sat" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_l"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/routine_enabled"
+            android:textAppearance="@style/TextAppearance.FocusLife.Body"
+            android:textColor="@color/text_primary" />
+
+    </LinearLayout>
+</ScrollView>

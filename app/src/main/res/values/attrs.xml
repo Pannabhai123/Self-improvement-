@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Attributes for the hand-drawn views. Kept in one file so a layout author can
+  see every custom knob without hunting through three declarations.
+-->
+<resources>
+
+    <declare-styleable name="ProgressRingView">
+        <attr name="prv_progress" format="integer" />
+        <attr name="prv_max" format="integer" />
+        <attr name="prv_trackColor" format="color" />
+        <attr name="prv_progressColor" format="color" />
+        <attr name="prv_valueColor" format="color" />
+        <attr name="prv_labelColor" format="color" />
+        <attr name="prv_strokeWidth" format="dimension" />
+        <attr name="prv_trackStrokeWidth" format="dimension" />
+        <attr name="prv_valueTextSize" format="dimension" />
+        <attr name="prv_labelTextSize" format="dimension" />
+        <attr name="prv_valueText" format="string" />
+        <attr name="prv_labelText" format="string" />
+        <attr name="prv_showGlow" format="boolean" />
+        <attr name="prv_animate" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="BarChartView">
+        <attr name="bcv_barColor" format="color" />
+        <attr name="bcv_barColorSecondary" format="color" />
+        <attr name="bcv_trackColor" format="color" />
+        <attr name="bcv_labelColor" format="color" />
+        <attr name="bcv_valueColor" format="color" />
+        <attr name="bcv_labelTextSize" format="dimension" />
+        <attr name="bcv_valueTextSize" format="dimension" />
+        <attr name="bcv_barRadius" format="dimension" />
+        <attr name="bcv_showValues" format="boolean" />
+        <attr name="bcv_showTrack" format="boolean" />
+        <!-- Draws a dashed horizontal line at this percentage of the max value. -->
+        <attr name="bcv_targetPercent" format="integer" />
+        <attr name="bcv_targetColor" format="color" />
+        <attr name="bcv_highlightLast" format="boolean" />
+        <attr name="bcv_valueSuffix" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="WeekStripView">
+        <attr name="wsv_doneColor" format="color" />
+        <attr name="wsv_partialColor" format="color" />
+        <attr name="wsv_emptyColor" format="color" />
+        <attr name="wsv_todayColor" format="color" />
+        <attr name="wsv_labelColor" format="color" />
+        <attr name="wsv_cellSize" format="dimension" />
+    </declare-styleable>
+
+</resources>
