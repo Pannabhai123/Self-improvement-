@@ -47,9 +47,23 @@ active-mode status, per-app limit warnings, and block-attempt notices.
 
 **If you decline:** everything still records and every screen still works. The app
 checks `canPostNotifications()` before posting, so there is no crash and no silent
-failure — it just does not notify. If you denied it permanently, the permissions
-screen routes you to system Settings rather than showing a prompt that will never
-appear again.
+failure — it just does not notify. If the app cannot read the notification state at
+all, it now reports *not granted* rather than assuming it is allowed; an unknown is
+not a yes, and guessing yes would let the app skip reminders it believed were
+arriving.
+
+**The request always goes through Android's own dialog first.** Tapping the
+notifications row shows the system prompt. Only *after* you decline does the app
+work out whether that decline was permanent — `shouldShowRequestPermissionRationale`
+returning false at that point means Android will never show the dialog again — and
+if so the explanation offers an **Open Settings** button, because tapping the row
+again would now do nothing at all.
+
+> This order matters and was not the original behaviour. That flag is false both
+> *before* the first request and *after* a permanent denial, so an earlier version
+> that branched on it up front skipped Android's prompt entirely on a fresh
+> install and dropped you straight into a settings screen. The dialog has to come
+> first; it is the only thing that distinguishes the two cases.
 
 **Grant it:** Settings → Notifications → Focus Life → Allow.
 
@@ -79,8 +93,13 @@ much an app has been used.
 
 **Grant it:** Settings → Apps → App management → ⋮ → Special app access →
 **Usage access** → Focus Life → Allow.
-The app opens this screen for you; on ColorOS you may still need to toggle it
-manually, because the system sometimes lands on a list rather than the app's page.
+
+The app opens that screen for you, deep-linked to Focus Life's own package so
+stock Android lands directly on its toggle. It used to deep-link to an *empty*
+package name, which is why it sometimes arrived at a list with no obvious entry —
+the filter matched nothing. On ColorOS you may still need to find Focus Life in
+the list manually, because that build ignores the deep link and shows every app;
+that is now a genuine fallback rather than the only behaviour.
 
 ---
 
@@ -124,6 +143,21 @@ The app shows an explanatory dialog *before* opening that screen, because Androi
 itself warns that accessibility services can observe your actions — and you
 deserve to know exactly what this one observes, which is package names only.
 
+**A technical note, because this one is invisible from inside the app.** The
+service is declared `android:exported="true"`, the single exception to the rule
+every other component in the manifest follows. It has to be: an accessibility
+service is bound by `system_server`'s `AccessibilityManagerService`, a different
+process with a different UID. Declared `exported="false"`, the framework cannot
+bind it — you can still toggle the service on, the toggle stays on, and nothing is
+ever blocked. `BIND_ACCESSIBILITY_SERVICE` is what keeps that openness safe: only
+the OS can bind, no other app can.
+
+The app's own reporting cannot detect this either. `isAccessibilityEnabled()`
+reads `Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES`, which lists the service as
+enabled whether or not it ever bound — so the toggle would read *on* while
+blocking silently did nothing. `tools/check_resources.py` §7b now asserts the
+manifest stays this way, since neither the compiler nor a unit test can see it.
+
 ---
 
 ## 4. Display over other apps
@@ -150,7 +184,11 @@ getting your attention.
 ColorOS's aggressive background management.
 
 **If you decline:** reminders may be delayed. This is survivable by design — see
-the two-layer delivery model below.
+the two-layer delivery model below. Declining it now explains the battery
+consequence specifically; that row previously fell through to the *notifications*
+copy and told you reminders were off, which is a different permission's problem.
+Battery is optional and is deliberately left out of the "4 of 4" progress count,
+so it can never be the reason onboarding looks incomplete.
 
 **Grant it:** the permissions screen offers the system dialog directly.
 Alternatively Settings → Battery → More settings → Optimise battery use →
@@ -207,6 +245,27 @@ rather than at the next boot.
 uses it narrowly: to build a list of launchable apps, with names and icons, so you
 can pick which ones to block. It reads **only** `packageName`, the app label and
 the icon. Nothing else is inspected, and nothing leaves the device.
+
+---
+
+## Reading the status in Profile
+
+Profile shows **Distraction Guard: on / limited / off**, matching the three
+enforcement levels the blocker screen already used:
+
+| Profile says | Meaning | Colour |
+|---|---|---|
+| **on** | Accessibility *and* overlay granted — blocked apps are stopped and the reason screen appears over them | green |
+| **limited** | Accessibility granted, overlay not — apps are stopped, but without the on-screen message | amber |
+| **off** | Accessibility not granted — nothing is actually blocked, only warned about | red |
+
+"limited" is a real state, not a cosmetic one. An earlier version collapsed it
+into "on", which told users the guard was fully working at exactly the moment the
+warning screen could not appear — and Profile is where someone goes to check.
+
+The count above it (`3 of 4`) covers notifications, usage access, accessibility
+and overlay. Battery optimisation is intentionally excluded: it is a
+recommendation for ColorOS, not a requirement.
 
 ---
 

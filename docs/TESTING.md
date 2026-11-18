@@ -11,7 +11,7 @@
 
 Category C is stated plainly rather than optimistically.
 
-**Current status:** CI is green. All 159 unit tests pass, the debug APK assembles,
+**Current status:** CI is green. All 164 unit tests pass, the debug APK assembles,
 and it is published as an artifact (5.4 MB). See "The build log" below for what it
 took to get there and what that process proved.
 
@@ -28,7 +28,7 @@ brief's own rule about never presenting an untested feature as working.
 ## How to build and verify it yourself
 
 ```bash
-./gradlew testDebugUnitTest     # 159 tests — must all pass
+./gradlew testDebugUnitTest     # 164 tests — must all pass
 ./gradlew assembleDebug         # produces the APK
 python3 tools/check_resources.py # static audit — exits non-zero on any problem
 ```
@@ -38,7 +38,7 @@ APK artifact is only uploaded if the tests pass.
 
 ---
 
-## A. Verified by automated tests (159 tests, 6 suites)
+## A. Verified by automated tests (164 tests, 7 suites)
 
 ### `BlockDecisionEngineTest` — 39 tests
 
@@ -164,6 +164,20 @@ under; all three 1600 m thresholds including exactly-eight-minutes *not* being
 under eight; no recorded run; both topic thresholds; null summaries tolerated; and
 a fully achieved history reaching all eighteen.
 
+### `PermissionManagerTest` — 5 tests
+
+Written after five permission bugs were found by reading `PermissionManager`
+line by line. It covers the parts that need no `Context`: that all five rows of
+`statusSnapshot` produce **distinct** denial titles and bodies, that the battery
+row explains battery rather than falling through to the notifications copy, that
+every index maps to the string named for that permission, and that an
+out-of-range index still returns a real resource id rather than `0` — a denial
+dialog is shown mid-onboarding, and inflating resource `0` would crash at exactly
+the moment the app is trying to explain itself gracefully.
+
+These assert on resource ids, not rendered text, so they run as plain JVM tests
+with no Robolectric.
+
 ---
 
 ## B. Verified by static analysis
@@ -177,20 +191,36 @@ a fully achieved history reaching all eighteen.
 | XML documents parsing as well-formed | 145 |
 | `@<type>/<name>` references resolving | 431 |
 | Own-namespace style parents resolving | all |
-| Strings, en/hi, in exact parity | 872 each |
+| Strings, en/hi, in exact parity | 875 each |
 | Positional placeholders matching across locales | all |
 | `getString`/`setText` format arguments matching | all |
 | Manifest components with a source file | all |
+| Manifest `android:exported` rules (§7b) | 18 components |
 | `com.focuslife.app.*` imports resolving | all |
 | Custom `prv_*`/`bcv_*`/`wsv_*` attributes declared | all |
 | ViewBinding fields matching a layout `android:id` | all |
-| Java sources with balanced delimiters | 89 |
+| Java sources with balanced delimiters | 90 |
 | CJK contamination in the Hindi file | none |
 
 Three of these were added *because* CI found what they missed: XML well-formedness
 (run 3), exact style resolution plus parent resolution (run 4), and delimiter
 balance (run 5). Test sources are now scanned by every Java section too — they were
 previously not scanned at all, even though CI compiles them in the same pass.
+
+**Section 7b was added by the permission audit**, and it is the first check that
+reasons about *semantics* rather than resolvability. It asserts four manifest
+rules: an accessibility service must be `exported="true"` **and** protected by
+`BIND_ACCESSIBILITY_SERVICE`; a receiver for a system broadcast must be
+`exported="true"`; any component with an intent-filter must declare `exported`
+explicitly (otherwise it is uninstallable on Android 12+); and a component with no
+intent-filter must *not* be exported (otherwise an internal service becomes
+reachable from any app). It was self-tested against **five injected mutations** —
+the real accessibility bug, the bind permission removed, `BootReceiver` set to
+false, the `exported` attribute deleted, and an internal service exported — and
+caught all five. This matters more than the other checks, because nothing else in
+the pipeline can see it: javac accepts either value, aapt2 accepts either value,
+and a unit test never parses the manifest. The only observable symptom is on a
+device, where blocking silently does nothing.
 
 The auditor's format-argument check has been self-tested against three injected
 bugs and its import check against an injected fake class, a fake ViewBinding and a
@@ -285,8 +315,8 @@ nothing is applicable and the score is 0.
 
 Proves: the project compiles, the resources link, Room's annotation processor
 accepts all 17 entities and 10 DAOs, ViewBinding generates for all 54 layouts, and
-159 behavioural assertions about scoring, blocking, scheduling, time arithmetic,
-categorisation and milestones hold.
+164 behavioural assertions about scoring, blocking, scheduling, time arithmetic,
+categorisation, milestones and permission indexing hold.
 
 Does not prove: anything about running the app. No screen has been drawn, no
 service has started, no notification has appeared. That is category C.
@@ -398,6 +428,28 @@ and it was fixed in code but never observed. *Erase all data* must require typin
 no screen crashes, that screen time reads as *not measured*, and that each screen
 explains what is missing rather than failing silently.
 
+Two specific things to watch, both introduced by the permission audit:
+
+- **Declining notifications on a fresh install must show Android's own dialog.**
+  It did not before. Then decline it a second time: the explanation should now
+  offer **Open Settings**, because Android will not show the dialog again.
+- **Declining battery optimisation must explain battery.** It previously showed
+  the notifications copy.
+
+### C13b. The accessibility service actually binds
+
+**Check:** enable the Distraction Guard, then confirm Profile reads *Distraction
+Guard: limited* (amber) if overlay is off and *on* (green) if it is granted — and
+that opening a blocked app is genuinely stopped.
+
+This is the highest-value item in category C. The `exported="false"` bug produced
+no error anywhere: not at build time, not in the manifest merger, not in a unit
+test, and not in the app's own status read, which consults
+`Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES` and reports *enabled* whether or
+not the service ever bound. The only way to observe it is to watch whether
+blocking happens. `adb shell dumpsys accessibility` will also show whether
+`system_server` has the service bound.
+
 ### C14. Room migration behaviour
 
 The schema is exported and `DatabaseSeeder` is idempotent, but an actual
@@ -438,13 +490,20 @@ shipped.
 | A style appended after `</resources>` | `mergeDebugResources` failure — malformed XML | aapt2, run 3 |
 | A comment placed inside an XML start tag | Malformed XML; the service config would not parse | Added XML parse check |
 | `tools/check_resources.py` reporting wrong line numbers | Comment stripping consumed newlines, so every reported line was wrong | Self-testing the scanner |
+| `BlockAccessibilityService` declared `android:exported="false"` | **The app blocker never worked at all.** `system_server` cannot bind an unexported service; the user toggles it on, the toggle stays on, nothing is blocked, and `isAccessibilityEnabled()` still reports true because it reads the enabled list | Permission audit; confirmed against AOSP CTS manifests |
+| `usageAccessIntent()` deep-linked to `Uri.fromParts("package", "", null)` | On builds that honour the URI the filter matched no app, landing the user on an empty screen with no way to find Focus Life | Permission audit |
+| `canPostNotifications` returned true when `NotificationManager` was null | An unknown reported as granted; the app would skip reminders it believed were arriving | Permission audit |
+| `deniedTitleRes`/`deniedBodyRes` had no `case 4` | Declining **battery optimisation** explained that *notifications* were off — a different permission's problem, and plausible enough that nobody would notice | Permission audit |
+| The notifications row branched on `shouldShowRequestPermissionRationale` before requesting | On a fresh install that flag is false, so the first tap **skipped Android's dialog entirely** and dropped the user into a settings screen | Permission audit |
+| Profile collapsed the three enforcement levels into on/off | Told users blocking was fully working when the warning screen could not be drawn — in the one place they would go to check | Permission audit |
+| `UsageAnalyzerActivity` showed "usage access is off" when the *settings screen* was missing | Blamed the user's permission state for a device limitation, and gave no way forward | Permission audit |
 
 ---
 
 ## What "working" means for this delivery
 
 **Delivered and verified:** the complete source tree; a green CI pipeline that runs
-159 tests and assembles an installable 5.4 MB APK on every push; a static auditor
+164 tests and assembles an installable 5.4 MB APK on every push; a static auditor
 that parses every XML document and gates each commit; and full documentation.
 
 **Verified by execution:** the project compiles, resources link, Room accepts the

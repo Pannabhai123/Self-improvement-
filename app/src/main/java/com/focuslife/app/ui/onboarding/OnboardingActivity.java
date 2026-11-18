@@ -109,7 +109,17 @@ public class OnboardingActivity extends AppCompatActivity {
                 granted -> {
                     refreshRow(PERM_NOTIFICATIONS);
                     if (!granted) {
-                        explainDenial(PERM_NOTIFICATIONS);
+                        // Read *after* the denial: false now means "don't ask
+                        // again", so the system dialog will never appear again and
+                        // Settings is the only way back. Saying nothing would leave
+                        // a button that looks broken. This callback only runs on
+                        // Android 13+, because requestNotificationPermission sends
+                        // older builds straight to Settings without launching the
+                        // runtime request - and on those builds the rationale flag
+                        // is always false, which would misread as "don't ask again".
+                        boolean dontAskAgain = !PermissionManager
+                                .shouldShowNotificationRationale(this);
+                        explainDenial(PERM_NOTIFICATIONS, dontAskAgain);
                     }
                     updateSummary();
                 });
@@ -307,19 +317,15 @@ public class OnboardingActivity extends AppCompatActivity {
             return;
         }
 
-        // After a permanent denial the system returns a denial immediately without
-        // showing anything, which reads as a broken button. Route to Settings
-        // instead, and say why.
-        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            launcher.launch(Manifest.permission.POST_NOTIFICATIONS);
-        } else {
-            Intent intent = PermissionManager.notificationSettingsIntent(this);
-            if (PermissionManager.isResolvable(this, intent)) {
-                launchSettings(intent, PERM_NOTIFICATIONS);
-            } else {
-                launcher.launch(Manifest.permission.POST_NOTIFICATIONS);
-            }
-        }
+        // Ask through the system dialog, always. This used to branch on
+        // shouldShowRequestPermissionRationale and only launch the dialog when it
+        // returned true - but that method is false both before the first request
+        // and after a permanent denial, so on a fresh install the very first tap
+        // skipped Android's prompt entirely and dropped the user into the
+        // notification settings screen. The dialog itself is what distinguishes
+        // the two cases, so it has to come first; the permanent-denial route is
+        // handled in the result callback instead.
+        launcher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
 
     private void launchSettings(@Nullable Intent intent, int index) {
@@ -349,12 +355,26 @@ public class OnboardingActivity extends AppCompatActivity {
      * <p>A denial is a legitimate answer. This states the consequence and moves
      * on; it does not re-prompt or guilt the user.</p>
      */
-    private void explainDenial(int index) {
-        new MaterialAlertDialogBuilder(this)
+    /**
+     * @param settingsIsTheOnlyRoute true when the system will no longer show a
+     *                               dialog for this permission, so the button
+     *                               should lead to Settings instead of implying
+     *                               that tapping the row again will help
+     */
+    private void explainDenial(int index, boolean settingsIsTheOnlyRoute) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(PermissionManager.deniedTitleRes(index))
                 .setMessage(PermissionManager.deniedBodyRes(index))
-                .setPositiveButton(R.string.onboarding_continue_anyway, null)
-                .show();
+                .setPositiveButton(R.string.onboarding_continue_anyway, null);
+
+        if (settingsIsTheOnlyRoute) {
+            Intent settings = PermissionManager.notificationSettingsIntent(this);
+            if (PermissionManager.isResolvable(this, settings)) {
+                builder.setNegativeButton(R.string.action_open_settings,
+                        (dialog, which) -> launchSettings(settings, index));
+            }
+        }
+        builder.show();
     }
 
     // ------------------------------------------------------------------

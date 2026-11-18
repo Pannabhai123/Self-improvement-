@@ -864,6 +864,8 @@
     <string name="perm_denied_accessibility_desc">Without the Distraction Guard, Focus Life cannot detect that a blocked app opened. Modes, timers and all tracking still work normally.</string>
     <string name="perm_denied_overlay_title">Warning screen unavailable</string>
     <string name="perm_denied_overlay_desc">Without overlay permission the block warning cannot be drawn over other apps. Blocking will notify you instead.</string>
+    <string name="perm_denied_battery_title">Battery optimisation is still on</string>
+    <string name="perm_denied_battery_desc">Focus Life works without this, but OPPO / ColorOS may delay reminders and the guard until you open the app. Allowing background activity fixes most of it.</string>
     <string name="perm_how_to_usage">Settings → Apps → Special app access → Usage access → Focus Life → Allow</string>
     <string name="perm_how_to_accessibility">Settings → Accessibility → Downloaded services → Focus Life Distraction Guard → turn on</string>
     <string name="perm_how_to_overlay">Settings → Apps → Focus Life → Allow display over other apps</string>
@@ -912,6 +914,7 @@
     <string name="profile_blocking_status">Distraction Guard: %1$s</string>
     <string name="profile_status_on">on</string>
     <string name="profile_status_off">off</string>
+    <string name="profile_status_limited">limited</string>
     <string name="profile_target_range">Enter a whole number from %1$d to %2$d. Use 0 to switch this target off.</string>
     <string name="profile_target_saved">Target updated</string>
     <string name="profile_storage_used">Local database size</string>

@@ -99,11 +99,15 @@ public class UsageAnalyzerActivity extends AppCompatActivity {
     }
 
     private void openUsageAccess() {
-        Intent intent = PermissionManager.usageAccessIntent();
+        Intent intent = PermissionManager.usageAccessIntent(this);
         if (PermissionManager.isResolvable(this, intent)) {
             startActivity(intent);
         } else {
-            showMessage(getString(R.string.usage_refresh_failed));
+            // The situation is "this device has no such settings screen", not
+            // "usage access is off" - the user tapped this button because they
+            // already know it is off. perm_not_available tells them what to do
+            // instead, and is the same copy onboarding uses for this case.
+            showMessage(getString(R.string.perm_not_available));
         }
     }
 

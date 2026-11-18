@@ -248,13 +248,27 @@ public class ProfileFragment extends Fragment implements MainActivity.Refreshabl
         b.tvPermissionStatus.setText(getString(R.string.profile_permission_status,
                 granted, COUNTED_PERMISSIONS));
 
+        // Three states, not two. Collapsing NOTIFICATION into "on" told users the
+        // guard was fully working when the block warning could not be drawn over
+        // the app it was stopping - and Profile is exactly where someone goes to
+        // check. Every other screen already distinguishes the three, with the same
+        // success / warning / danger colours used here.
         int level = ModeController.enforcementLevel(context);
-        String state = getString(level == ModeController.ENFORCEMENT_NONE
-                ? R.string.profile_status_off : R.string.profile_status_on);
-        b.tvBlockingStatus.setText(getString(R.string.profile_blocking_status, state));
-        b.tvBlockingStatus.setTextColor(requireContext().getColor(
-                level == ModeController.ENFORCEMENT_NONE
-                        ? R.color.warning_500 : R.color.success_500));
+        int stateRes;
+        int colourRes;
+        if (level == ModeController.ENFORCEMENT_FULL) {
+            stateRes = R.string.profile_status_on;
+            colourRes = R.color.success_500;
+        } else if (level == ModeController.ENFORCEMENT_NOTIFICATION) {
+            stateRes = R.string.profile_status_limited;
+            colourRes = R.color.warning_500;
+        } else {
+            stateRes = R.string.profile_status_off;
+            colourRes = R.color.danger_500;
+        }
+        b.tvBlockingStatus.setText(getString(R.string.profile_blocking_status,
+                getString(stateRes)));
+        b.tvBlockingStatus.setTextColor(context.getColor(colourRes));
     }
 
     // ------------------------------------------------------------------

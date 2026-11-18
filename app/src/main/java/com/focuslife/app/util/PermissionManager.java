@@ -84,12 +84,23 @@ public final class PermissionManager {
         }
     }
 
+    /**
+     * Opens the Usage access screen, deep-linked to this app where the platform
+     * honours the package URI.
+     *
+     * <p>Takes a {@code Context} because the deep link is meaningless without the
+     * real package name. This used to pass an empty string, so on builds that do
+     * honour the URI — stock Android opens that app's own toggle directly — the
+     * filter matched nothing and the user landed on an empty screen with no way to
+     * find Focus Life in the list. {@link #overlayIntent} and
+     * {@link #accessibilityIntent} already worked this way.</p>
+     */
     @NonNull
-    public static Intent usageAccessIntent() {
+    public static Intent usageAccessIntent(@NonNull Context context) {
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        // Some OEM builds (including ColorOS) land on a generic list; deep-link
-        // to this package where the extra is honoured, and ignore it otherwise.
-        intent.setData(Uri.fromParts("package", "", null));
+        intent.setData(Uri.fromParts("package", context.getPackageName(), null));
+        // Some OEM builds (including ColorOS) ignore the data URI and show a
+        // generic list, so fall back to the plain action, then to Settings.
         return safeSettingsIntent(intent, Settings.ACTION_USAGE_ACCESS_SETTINGS);
     }
 
@@ -191,7 +202,11 @@ public final class PermissionManager {
             // reliable source of truth.
             android.app.NotificationManager nm =
                     (android.app.NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            return nm == null || nm.areNotificationsEnabled();
+            // A null manager means the check could not be made, which is not the
+            // same as "allowed". Every other check in this class fails towards
+            // false, and reporting a permission as granted when it is unknown
+            // would let the app silently skip reminders it believes will arrive.
+            return nm != null && nm.areNotificationsEnabled();
         }
         return ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
                 == PackageManager.PERMISSION_GRANTED;
@@ -325,7 +340,7 @@ public final class PermissionManager {
     public static Intent intentFor(@NonNull Context context, int index) {
         switch (index) {
             case 0: return null; // runtime permission, requested by the activity
-            case 1: return usageAccessIntent();
+            case 1: return usageAccessIntent(context);
             case 2: return accessibilityIntent(context);
             case 3: return overlayIntent(context);
             case 4: return batteryOptimisationIntent(context);
@@ -333,13 +348,21 @@ public final class PermissionManager {
         }
     }
 
-    /** What to show when a permission was declined, index by index. */
+    /**
+     * What to show when a permission was declined, index by index.
+     *
+     * <p>Indexes 0-4 are the same order as {@link #statusSnapshot}, and all five
+     * are covered explicitly. The {@code default} used to return the notifications
+     * copy, so declining the battery row explained that reminders were off -
+     * plausible enough that nobody would notice it was the wrong answer.</p>
+     */
     public static int deniedTitleRes(int index) {
         switch (index) {
             case 0: return R.string.perm_denied_notifications_title;
             case 1: return R.string.perm_denied_usage_title;
             case 2: return R.string.perm_denied_accessibility_title;
             case 3: return R.string.perm_denied_overlay_title;
+            case 4: return R.string.perm_denied_battery_title;
             default: return R.string.perm_denied_notifications_title;
         }
     }
@@ -350,6 +373,7 @@ public final class PermissionManager {
             case 1: return R.string.perm_denied_usage_desc;
             case 2: return R.string.perm_denied_accessibility_desc;
             case 3: return R.string.perm_denied_overlay_desc;
+            case 4: return R.string.perm_denied_battery_desc;
             default: return R.string.perm_denied_notifications_desc;
         }
     }

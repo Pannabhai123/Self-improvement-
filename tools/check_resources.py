@@ -722,6 +722,89 @@ else:
     print("OK: every manifest component has a source file")
 
 # ----------------------------------------------------------------------
+#  7b. Manifest exported rules
+# ----------------------------------------------------------------------
+# Neither javac nor a unit test can see these, and every one of them fails
+# silently on a device rather than at build time:
+#
+#   * An accessibility service bound by system_server needs exported="true".
+#     With exported="false" the user can still toggle it on and the toggle stays
+#     on, but the framework cannot bind it and nothing is ever blocked.
+#   * A receiver for a system broadcast is not reached through a PendingIntent
+#     this app created, so it also needs exported="true".
+#   * Any component with an intent-filter but no explicit exported attribute
+#     cannot be installed at all on Android 12+.
+#   * A component with no intent-filter should stay unexported, or an internal
+#     activity becomes reachable from any other app.
+
+SYSTEM_BROADCASTS = {
+    "android.intent.action.BOOT_COMPLETED",
+    "android.intent.action.LOCKED_BOOT_COMPLETED",
+    "android.intent.action.MY_PACKAGE_REPLACED",
+    "android.intent.action.PACKAGE_REPLACED",
+}
+ACCESSIBILITY_ACTION = "android.accessibilityservice.AccessibilityService"
+BIND_ACCESSIBILITY = "android.permission.BIND_ACCESSIBILITY_SERVICE"
+
+
+def component_blocks(text):
+    """Yield (tag, attrs, body) for every activity, service and receiver."""
+    for m in re.finditer(r"<(activity|service|receiver)\b(.*?)(/?)>", text, re.S):
+        tag, attrs, self_closing = m.group(1), m.group(2), m.group(3)
+        if self_closing == "/":
+            yield tag, attrs, ""
+            continue
+        close = text.find("</" + tag + ">", m.end())
+        yield tag, attrs, text[m.end():close if close != -1 else len(text)]
+
+
+export_problems = []
+checked_components = 0
+for tag, attrs, body in component_blocks(manifest_text):
+    name_m = re.search(r'android:name="([^"]+)"', attrs)
+    name = name_m.group(1) if name_m else "<unnamed>"
+    exp_m = re.search(r'android:exported="(true|false)"', attrs)
+    exported = exp_m.group(1) if exp_m else None
+    actions = re.findall(r'<action android:name="([^"]+)"', body)
+    perm_m = re.search(r'android:permission="([^"]+)"', attrs)
+    checked_components += 1
+
+    if actions and exported is None:
+        export_problems.append(
+            f"{name}: has an intent-filter but no android:exported "
+            f"(uninstallable on Android 12+)")
+        continue
+
+    if ACCESSIBILITY_ACTION in actions:
+        if exported != "true":
+            export_problems.append(
+                f"{name}: an accessibility service is bound by system_server, so it "
+                f"needs android:exported=\"true\" (found {exported}); with false the "
+                f"service can be enabled but never binds, and nothing is blocked")
+        if not perm_m or perm_m.group(1) != BIND_ACCESSIBILITY:
+            export_problems.append(
+                f"{name}: an accessibility service must be protected by "
+                f"{BIND_ACCESSIBILITY}, or any app can bind to it")
+
+    for action in actions:
+        if action in SYSTEM_BROADCASTS and exported != "true":
+            export_problems.append(
+                f"{name}: receives the system broadcast {action}, which is not sent "
+                f"through a PendingIntent this app created, so it needs "
+                f"android:exported=\"true\"")
+
+    if not actions and exported == "true" and tag != "activity":
+        export_problems.append(
+            f"{name}: has no intent-filter but is exported, making an internal "
+            f"{tag} reachable from any other app")
+
+if export_problems:
+    for item in export_problems:
+        fail(f"manifest exported rule -> {item}")
+else:
+    print(f"OK: all {checked_components} manifest components follow the exported rules")
+
+# ----------------------------------------------------------------------
 #  8. Layout root/view class sanity: every custom view class referenced exists
 # ----------------------------------------------------------------------
 
